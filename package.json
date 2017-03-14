@@ -1,0 +1,27 @@
+{
+  "name": "tidygit",
+  "version": "1.0.0",
+  "description": "automated code beautifier ",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rdotchin/TidyGit.git"
+  },
+  "author": "Richard Dotchin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rdotchin/TidyGit/issues"
+  },
+  "homepage": "https://github.com/rdotchin/TidyGit#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "js-beautify": "^1.6.11",
+    "method-override": "^2.3.7",
+    "morgan": "^1.8.1",
+    "nodegit": "^0.18.0"
+  }
+}
