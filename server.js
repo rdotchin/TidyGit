@@ -49,7 +49,7 @@ passport.use(new GitHubStrategy({
     	}
     })
         .then(function(user, created) {
-                console.log(user);
+                /*console.log(user);*/
 
                 //null is where err should be
                 return done(null, user);

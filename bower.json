@@ -1,0 +1,20 @@
+{
+  "name": "tidygit",
+  "description": "automated code beautifier",
+  "main": "server.js",
+  "authors": [
+    "Richard Dotchin"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/rdotchin/TidyGit",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lockr": "^0.8.4"
+  }
+}

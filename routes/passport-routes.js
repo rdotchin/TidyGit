@@ -8,7 +8,7 @@ module.exports = function(app){
   		function(req, res) {
   			console.log(res);
     		// Successful authentication, redirect home.
-    		res.redirect('/home');
+    		res.redirect("/");
   			});
 
 
