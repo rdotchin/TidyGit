@@ -1,4 +1,4 @@
-const Git = require("nodegit");
+const Git = require("nodegit"); // Used to clone github repos
 const execFile = require('child_process').execFile;
 const fs = require('fs');
 const beautify = require('js-beautify').js_beautify;

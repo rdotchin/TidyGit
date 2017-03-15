@@ -1,10 +1,70 @@
 const express = require('express');
-var methodOverride = require('method-override');
+const methodOverride = require('method-override');
 const app = express();
 const logger = require("morgan");
 const bodyParser = require('body-parser');
+const passport = require('passport');
+const GitHubStrategy = require('passport-github').Strategy;
 const PORT = process.env.PORT || 8080;
 
+
+/*================================PASSPORT GITHUB=================================================*/
+// Passport session setup.
+//   To support persistent login sessions, Passport needs to be able to
+//   serialize users into and deserialize users out of the session.  Typically,
+//   this will be as simple as storing the user ID when serializing, and finding
+//   the user by ID when deserializing.  However, since this example does not
+//   have a database of user records, the complete GitHub profile is serialized
+//   and deserialized.
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+
+//requiring our models for syncing
+const db = require("./models");
+
+// Passport Github
+passport.use(new GitHubStrategy({
+    clientID: "a9236c2bd104aff0b72e",
+    clientSecret: "1cd8b65feef743409d63c189915b2b76bc415a70",
+    callbackURL: "http://127.0.0.1:8080/auth/github/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+  	// If the user is not in the database it will create them
+    db.Users.findOrCreate({ 
+    	where: {
+    		githubId: profile.id
+    	},
+    	defaults: {
+    		name: profile.displayName,
+    		username: profile.username,
+    		profileUrl: profile.profileUrl,
+    		email: profile.emails[0].value,
+    		photo: profile.photos[0].value
+    	}
+    })
+        .then(function(user, created) {
+                console.log(user);
+
+                //null is where err should be
+                return done(null, user);
+            });
+  }
+));
+
+/*================================PASSPORT GITHUB END=================================================*/
+
+/*===============================CONFIGURE EXPRESS================================================*/
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Serve static content for the app from the "app" directory
+app.use(express.static(__dirname + "/app"));
 
 // Morgan and body-parser
 app.use(logger("dev"));
@@ -16,11 +76,13 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 //require routes
 require('./app/routes/routes.js')(app);
 
-
-// Serve static content for the app from the "app" directory
-app.use(express.static(__dirname + "/app"));
-
-app.listen(PORT, function(){
-   console.log("listening on " + PORT);
+//syncing our sequelize models then starting our express app.  
+//Use force:true after models have been altered or first running the app on a local machine
+db.sequelize.sync({force: true}).then(function() {
+    app.listen(PORT, function() {
+        console.log("listening on http://localhost:" + PORT);
+    });
 });
+
+
 
