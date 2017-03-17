@@ -1,3 +1,5 @@
 angular
-	.module('tidygit.login', []);
+	.module('tidygit.login', [
+        'tidygit.component.user'
+	]);
 	

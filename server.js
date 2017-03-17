@@ -83,7 +83,7 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 
 //require passport and GitHub api routesroutes
 require('./routes/passport-routes.js')(app);
-require('./app/api-routes.js')(app);
+
 
 
 //syncing our sequelize models then starting our express app.  
