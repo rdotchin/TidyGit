@@ -1,9 +1,10 @@
 const express = require('express');
+const passport = require('passport');
 const methodOverride = require('method-override');
 const app = express();
 const logger = require("morgan");
+var session = require('express-session');
 const bodyParser = require('body-parser');
-const passport = require('passport');
 const GitHubStrategy = require('passport-github').Strategy;
 const PORT = process.env.PORT || 8080;
 
@@ -17,6 +18,8 @@ const PORT = process.env.PORT || 8080;
 //   have a database of user records, the complete GitHub profile is serialized
 //   and deserialized.
 passport.serializeUser(function(user, done) {
+  /*  console.log(user);*/
+  console.log('serialize', user);
   done(null, user);
 });
 
@@ -35,6 +38,8 @@ passport.use(new GitHubStrategy({
     callbackURL: "http://127.0.0.1:8080/auth/github/callback"
   },
   function(accessToken, refreshToken, profile, done) {
+    /*console.log(typeof accessToken);
+    console.log(profile);*/
   	// If the user is not in the database it will create them
     db.Users.findOrCreate({ 
     	where: {
@@ -42,6 +47,7 @@ passport.use(new GitHubStrategy({
     	},
     	defaults: {
     		name: profile.displayName,
+            accessToken: accessToken,
     		username: profile.username,
     		profileUrl: profile.profileUrl,
     		email: profile.emails[0].value,
@@ -60,6 +66,8 @@ passport.use(new GitHubStrategy({
 /*================================PASSPORT GITHUB END=================================================*/
 
 /*===============================CONFIGURE EXPRESS================================================*/
+app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -75,11 +83,12 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 
 //require passport and GitHub api routesroutes
 require('./routes/passport-routes.js')(app);
-require('./routes/api-routes.js')(app);
+require('./app/api-routes.js')(app);
+
 
 //syncing our sequelize models then starting our express app.  
 //Use force:true after models have been altered or first running the app on a local machine
-db.sequelize.sync({force: true}).then(function() {
+db.sequelize.sync({/*force: true*/}).then(function() {
     app.listen(PORT, function() {
         console.log("listening on http://localhost:" + PORT);
     });

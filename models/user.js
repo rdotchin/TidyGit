@@ -9,7 +9,9 @@ module.exports = function(sequelize, DataTypes) {
         name: {
             type: DataTypes.STRING
         },
-
+        accessToken: {
+            type: DataTypes.STRING
+        },
         githubId: {
             type: DataTypes.STRING
         },
