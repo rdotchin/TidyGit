@@ -1,5 +1,14 @@
-<div>
+<div ng-controller="HomeCtrl">
+    <ul>
+        <li class="list"
+            ng-repeat="repo in HomeVM.repoArr"
+            aria-label="repo">
+            <!--list repos-->
+            <a href="{{repo.html_url}}" target="_blank">{{repo.name}}</a>
+            <button class="button is-success is-outlined" ng-click="HomeVM.cleanRepo(repo.html_url, repo.name)">Tidy Repo</button>
 
-<button ng-click="HomeVM.getLogin()"></button>
-<p>Home Test</p>
+        </li>
+
+    </ul>
+
 </div>
