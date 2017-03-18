@@ -19,9 +19,10 @@ function HomeCtrl(user, $http){
      function getRepo(username) {
      	$http.get('https://api.github.com/users/' + username + '/repos')
 			.then(function(resp){
-				var repoUrl = resp.data[0].html_url;
-				var repoName = resp.data[0].name;
+				var repoUrl = resp.data[25].html_url;
+				var repoName = resp.data[25].name;
 				cleanRepo(repoUrl, repoName);
+				console.log(resp.data[25].name);
 
 
 			})

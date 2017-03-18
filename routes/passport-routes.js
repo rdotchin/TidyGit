@@ -1,5 +1,5 @@
 const passport = require('passport');
-var request = require('request');
+const tidyGit = require('../app/tidygit/layout/js/app.js');
 
 module.exports = function(app){
 
@@ -36,9 +36,17 @@ module.exports = function(app){
 
     /* route receiving the repo url and name that that the user would like to tidy FOR TESTING PURPOSES CURRENTLY*/
 	app.post('/clean/repo', function(req, res){
+	    var repoURL = req.body.repoUrl;
+	    var repoName = req.body.repoName;
 	    console.log(req.body.repoUrl);
 	    console.log(req.body.repoName);
-	    res.send(200);
-    })
+	    tidyGit(repoURL, repoName); // call function in app.js to run tidyGit
+	    res.sendStatus(200);
+    });
+
+    app.get('/user', ensureAuthenticated, function(req, res){
+        /*console.log(req.user);*/
+        res.send(req.user);
+        });
 
 };
