@@ -11,6 +11,8 @@ function HomeCtrl(user, $http){
     $http.get('/user')
         .then(function(resp){
 			var username = resp.data[0].username;
+			Lockr.set('username', username);
+			console.log("lockr", Lockr.get('username'));
 			getRepo(username);
         });
 
