@@ -6,15 +6,20 @@ angular
 function HomeCtrl(user, $http){
 	const vm = this;
     vm.repoArr = [];
+    vm.user = [];
 
 	/* Get request to retrieve the users information.  Need the username to pull
 	their github repos*/
     $http.get('/user')
         .then(function(resp){
-            console.log(resp.data);
+            /*console.log(resp.data);*/
 			var username = resp.data[0].username;
-			Lockr.set('username', username);
-			console.log("lockr", Lockr.get('username'));
+			/*Lockr.set('username', username);
+			console.log("lockr", Lockr.get('username'));*/
+			resp.data.forEach(function(data){
+			    vm.user.push(data);
+            });
+			console.log(vm.user);
 			getRepo(username);
         });
 

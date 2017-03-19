@@ -1,50 +1,54 @@
 <div ng-controller="HomeCtrl">
-    <!--<ul>
-        <li class="list"
-            ng-repeat="repo in HomeVM.repoArr"
-            aria-label="repo">
-            &lt;!&ndash;list repos&ndash;&gt;
-            <a href="{{repo.html_url}}" target="_blank">{{repo.name}}</a>
-            <button class="button is-success is-outlined" ng-click="HomeVM.cleanRepo(repo.html_url, repo.name)">Tidy Repo</button>
+    <nav class="nav has-shadow">
+        <div class="container">
+            <div class="nav-left">
+                <a class="nav-item">
+                    hello
+                    <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma logo">
+                </a>
+            </div>
+        </div>
+    </nav>
 
-        </li>
 
-    </ul>-->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>GitHub</th>
-                <th>Repo URL</th>
-                <th>Repo Name</th>
-                <th>Branches</th>
-                <th>GitTidy</th>
+
+    <!--table-->
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>GitHub</th>
+                    <th>Repo URL</th>
+                    <th>Repo Name</th>
+                    <th>Branches</th>
+                    <th>GitTidy</th>
+                </tr>
+            </thead>
+            <tr class="list"
+                ng-repeat="repo in HomeVM.repoArr"
+                aria-label="repo">
+                <td><a href="{{repo.html_url}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
+                <td>{{repo.html_url}}</td>
+                <td>{{repo.name}}</td>
+                <td>
+                    <div class="field">
+                        <p class="control">
+                            <span class="select">
+                                <select>
+                                    <option>Select dropdown</option>
+                                    <option>With options</option>
+                                </select>
+                            </span>
+                        </p>
+                    </div>
+                </td>
+
+                <td><button class="button is-success is-outlined"
+                            ng-click="HomeVM.cleanRepo(repo.html_url, repo.name)">
+                    Start</button>
+                </td>
             </tr>
-        </thead>
-        <tr class="list"
-            ng-repeat="repo in HomeVM.repoArr"
-            aria-label="repo">
-            <td><a href="{{repo.html_url}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
-            <td>{{repo.html_url}}</td>
-            <td>{{repo.name}}</td>
-            <td>
-                <div class="field">
-                    <p class="control">
-                        <span class="select">
-                            <select>
-                                <option>Select dropdown</option>
-                                <option>With options</option>
-                            </select>
-                        </span>
-                    </p>
-                </div>
-            </td>
 
-            <td><button class="button is-success is-outlined"
-                        ng-click="HomeVM.cleanRepo(repo.html_url, repo.name)">
-                Start</button>
-            </td>
-        </tr>
-
-    </table>
-
+        </table>
+    </div>
 </div>
