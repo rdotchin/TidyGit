@@ -1,5 +1,6 @@
 const passport = require('passport');
 const tidyGit = require('../app/tidygit/layout/js/app.js');
+const request = require('request');
 
 module.exports = function(app){
 
@@ -24,8 +25,18 @@ module.exports = function(app){
     		res.redirect("/#!/home");
   			});
 
-	// route to test if the user is logged in or not
-	app.get('/home', ensureAuthenticated, function(req, res) {
+	// Route to get all of the users github repos
+	app.get('/repos', ensureAuthenticated, function(req, res) {
+        const options = {
+            'url': 'https://api.github.com/user/repos?access_token=' + req.user.accessToken,
+            'headers': {
+                'User-Agent': 'rdotchin'
+            }
+        };
+        // invoke function from app.js
+		tidyGit.reposList(req.user.username, req.user.accessToken, function(repos){
+            res.send(repos);
+		});
 	});
 
 	// route to log out
@@ -39,7 +50,7 @@ module.exports = function(app){
 	    var repoURL = req.body.repoUrl;
 	    var repoName = req.body.repoName;
 		const user = req.user[0];
-	    tidyGit(repoURL, './' + repoName, user); // call function in app.js to run tidyGit
+	    tidyGit.cloneRepo(repoURL, './' + repoName, user); // call function in app.js to run tidyGit
 	    res.sendStatus(200);
     });
 

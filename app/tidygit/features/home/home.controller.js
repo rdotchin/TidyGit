@@ -19,6 +19,10 @@ function HomeCtrl(user, $http){
 			getRepo(resp.data.username);
         });
 
+    $http.get('/repos')
+		.then(function(resp){
+			console.log(resp.data);
+		});
     /*After getting the user data this function will be invoked to retrieve all of
       the users GitHub repos and put the url and name of each repo into an array to
       be displayed on the page for the user to select*/

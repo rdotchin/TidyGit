@@ -6,52 +6,38 @@ const beautify = require('js-beautify').js_beautify;
 const moment = require('moment');
 const path = require('path');
 
-module.exports = function(repoURL, repoName, user) {
+module.exports = /*function(repoURL, repoName, user) */{
 
-    var signature = nodegit.Signature.create(user.name, user.email, moment().unix(), 0);
+    cloneRepo : function(repoURL, repoName, user) {
+        var signature = nodegit.Signature.create(user.name, user.email, moment().unix(), 0);
 
+        /* Use nodegit to clone the github repo */
+        nodegit.Clone(repoURL, repoName).then(function (repository) {
 
-
-
-    /* const opts = {
-     fetchOpts: {
-     callbacks: {
-     credentials: function() {
-     return nodegit.Cred.userpassPlaintextNew(token, "x-oauth-basic");
-     },
-     certificateCheck: function() {
-     return 1;
-     }
-     }
-     }
-     };*/
-    /* Use nodegit to clone the github repo */
-    nodegit.Clone(repoURL, repoName).then(function (repository) {
-
-        parseDir(repoName);
-    });
-
-    //find all files in github repo
-    function parseDir(repoName) {
-        execFile('find', [repoName], function (err, stdout, stderr) {
-            //split the results with a space
-            /*console.log(repoName + " parsed");*/
-            var fileList = stdout.split('\n');
-
-            //for each file search if it includes .js and doesn't include bower(to reduce results)
-            fileList.forEach(function (file) {
-                if (file.includes(".js") && !file.includes("bower")) {
-                    //call function to beautify the js file
-                    beautifyFile(file);
-                }
-
-            });
-            githubCommit();
+            parseDir(repoName);
         });
-    }
 
+        //find all files in github repo
+        function parseDir(repoName) {
+            execFile('find', [repoName], function (err, stdout, stderr) {
+                //split the results with a space
+                /*console.log(repoName + " parsed");*/
+                var fileList = stdout.split('\n');
+
+                //for each file search if it includes .js and doesn't include bower(to reduce results)
+                fileList.forEach(function (file) {
+                    if (file.includes(".js") && !file.includes("bower")) {
+                        //call function to beautify the js file
+                        beautifyFile(file);
+                    }
+
+                });
+                githubCommit();
+            });
+        }
+    },
     /*Read js file, beautify the file, replace the file*/
-    function beautifyFile(file) {
+    beautifyFile: function(file) {
         //read js file
         fs.readFile(file, 'utf8', function (err, data) {
             if (err) {
@@ -63,10 +49,10 @@ module.exports = function(repoURL, repoName, user) {
         }))
         });
         //call function to create a github pull request
-    }
+    },
 
     // Create a repo commit
-    function githubCommit(){
+    githubCommit: function(){
 
         var _repository;
         var _index;
@@ -112,9 +98,9 @@ module.exports = function(repoURL, repoName, user) {
             })
             .done();
 
-    }
+    },
     // function for github pull request
-    function githubPR() {
+    githubPR: function() {
 
         var options = {
             /*'https://api.github.com/repos/rdotchin/' + repoName + '/pulls'*/
@@ -137,10 +123,25 @@ module.exports = function(repoURL, repoName, user) {
             /*console.log(httpResponse);*/
             console.log(body);
         })
-    }
+    },
 
     // function to delete repo dir
-    function deleteRepo(file){
+    deleteRepo: function(file){
 
+    },
+    /* will return a list of all the users repos, invoked in passport-routes.js*/
+    reposList: function(user, token, cb){
+        const options = {
+            'url': 'https://api.github.com/user/repos?access_token=' + token,
+            'headers': {
+                'User-Agent': user
+            }
+        };
+        request(options, function(err, response, body){
+            cb(body);
+            /*console.log('\nRESPONSE', response);
+             console.log('\nBODY', body);*/
+        })
     }
+
 };
