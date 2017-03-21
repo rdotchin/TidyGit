@@ -15,6 +15,7 @@ module.exports = /*function(repoURL, repoName, user) */{
 
     /* will return a list of all the users repos, invoked in passport-routes.js*/
     reposList: function(user, token, cb){
+        console.log(__dirname);
         const options = {
             'url': 'https://api.github.com/user/repos?access_token=' + token,
             'headers': {
@@ -32,9 +33,9 @@ module.exports = /*function(repoURL, repoName, user) */{
         var signature = nodegit.Signature.create(user.name, user.email, moment().unix(), 0);
 
         /* CLONE THE GITHUB REPO */
-        nodegit.Clone(repoURL, repoName).then(function (repository) {
+        nodegit.Clone(repoURL, __dirname + '/' + repoName).then(function (repository) {
             //OPEN THE REPO AND CREATE A NEW BRANCH CALLED TidyGit
-            nodegit.Repository.open('./' + repoName)
+            nodegit.Repository.open(__dirname + '/' + repoName)
                 .then(function (repo) {
                     // Create a new branch on head
                     return repo.getHeadCommit()
@@ -48,7 +49,7 @@ module.exports = /*function(repoURL, repoName, user) */{
                         });
                 }).done(function () {
                 checkoutBranch(repoName, user, repoURL);
-                console.log("All done!");
+                /*console.log("All done!");*/
 
             });
         });
@@ -58,7 +59,7 @@ module.exports = /*function(repoURL, repoName, user) */{
 /* CHECKOUT THE TIDYGIT BRANCH*/
 function checkoutBranch(repoName, user, repoURL){
 
-    nodegit.Repository.open('./' + repoName).then(function(repo) {
+    nodegit.Repository.open(__dirname + '/' + repoName).then(function(repo) {
         return repo.getCurrentBranch().then(function(ref) {
             const checkoutOpts = {
                 checkoutStrategy: nodegit.Checkout.STRATEGY.FORCE
@@ -66,64 +67,80 @@ function checkoutBranch(repoName, user, repoURL){
             return repo.checkoutBranch("TidyGit", checkoutOpts);
         }).then(function () {
             return repo.getCurrentBranch().then(function(ref) {
-                console.log("On " + ref.shorthand() + " " + ref.target());
+               /* console.log("On " + ref.shorthand() + " " + ref.target());*/
             });
         });
     }).catch(function (err) {
         console.log(err);
     }).done(function () {
         parseDir(repoName, user, repoURL);
-        console.log('Finished');
+        /*console.log('Finished');*/
     });
 }
 
 //find all files in github repo
+var filesToUpdate = [];
 function parseDir(repoName, user, repoURL) {
-    console.log('parseDir user', user);
-    execFile('find', [repoName], function (err, stdout, stderr) {
-        //split the results with a space
-        /*console.log(repoName + " parsed");*/
-        var fileList = stdout.split('\n');
-
-        //for each file search if it includes .js and doesn't include bower(to reduce results)
-        fileList.forEach(function (file) {
-            if (file.includes(".js") && !file.includes("bower")) {
-                //call function to beautify the js file
-                beautifyFile(repoName, user, repoURL, file);
-            }
-
+    /*console.log('parseDir user', user);*/
+    execFile('find', [__dirname + '/' + repoName], function (err, stdout, stderr) {
+        filesToUpdate = stdout.split('\n');
+        filesToUpdate = filesToUpdate.filter(function(file) {
+            return file.includes(".js") && !file.includes("bower")
         });
 
+        tidyNextFile(repoName, user, repoURL);
+    });
+}
+
+function tidyNextFile(repoName, user, repoURL) {
+    var file = filesToUpdate.pop();
+
+    if(!file) {
+        return simpleGit(__dirname + '/' + repoName).raw(['add', '-A'], function() {
+            githubCommit(__dirname + '/' + repoName, user, repoURL);
+        });
+    }
+
+    fs.readFile(file, 'utf8', function (err, data) {
+        fs.writeFile(file, beautify(data, {indent_size: 6}), function() {
+            console.log('successful write');
+            tidyNextFile(repoName, user, repoURL);
+        })
     });
 }
 
 function gitAdd(repoName, user, repoURL){
-    simpleGit('./' + repoName).raw(['add', '-A'], function(err, result){
+    console.log(__dirname + '/' + repoName);
+    simpleGit(__dirname + '/' + repoName).raw(['add', '-A'], function(err, result){
         if(err) throw err;
         console.log("git add -A", result);
-        githubCommit(repoName, user, repoURL);
+        /*githubCommit(repoName, user, repoURL);*/
     })
 }
 
 /*Read js file, beautify the file, replace the file*/
 function beautifyFile(repoName, user, repoURL, file) {
     //read js file
+    console.log(file);
     fs.readFile(file, 'utf8', function (err, data) {
         if (err) {
             throw err;
         }
         /* Beautify the foo.js file and replace it*/
         fs.writeFile(file, beautify(data, {indent_size: 6}, function(err) {
+            console.log(err);
             if (err) throw err;
+
+            simpleGit(__dirname + '/' + repoName).raw(['add', '-A']);
         }))
     });
-    gitAdd(repoName, user, repoURL);
+
     //call function to create a github pull request
 }
 
 // Create a repo commit
 function githubCommit(repoName, user, repoURL){
-    console.log('githubCommit user', user);
+   /* console.log('githubCommit user', user);*/
     var _repository;
     var _index;
     var _oid;
@@ -132,7 +149,7 @@ function githubCommit(repoName, user, repoURL){
     //open a git repo
     nodegit.Repository.open(repoName)
         .then(function(repo) {
-            console.log('commit repo', repo);
+           /* console.log('commit repo', repo);*/
             _repository = repo;
             return repo.refreshIndex();
         })
@@ -146,7 +163,7 @@ function githubCommit(repoName, user, repoURL){
             return _index.writeTree();
         })
         .then(function(oid) {
-            console.log("oid");
+            /*console.log("oid");*/
             _oid = oid;
             return nodegit.Reference.nameToId(_repository, "HEAD");
         })
@@ -165,7 +182,7 @@ function githubCommit(repoName, user, repoURL){
         .then(function(commitId) {
             // the file is removed from the git repo, use fs.unlink now to remove it
             // from the filesystem.
-            console.log("New Commit:", commitId.allocfmt());
+           /* console.log("New Commit:", commitId.allocfmt());*/
         })
         /// PUSH
         .then(function() {
@@ -178,7 +195,7 @@ function githubCommit(repoName, user, repoURL){
 //FIGURE OUT WAY TO PASS IN accessToken FOR PRIVATE REPOS*****
 function pushBranch(repoName, user, repoURL){
     /*require('simple-git')()*/
-        simpleGit('./' + repoName).push(['origin', 'TidyGit:TidyGit'], function () {
+        simpleGit(repoName).push(['origin', 'TidyGit:TidyGit'], function () {
             console.log('push branch done');
         });
 

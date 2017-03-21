@@ -52,12 +52,11 @@ module.exports = function(app){
         const user = req.user;
         var repoURL = 'https://' + user.accessToken + ':x-oauth-basic@github.com/' + user.username + '/' + repoName + '.git';
 
-	    tidyGit.cloneRepo(repoURL, './' + repoName, user); // call function in app.js to run tidyGit
+	    tidyGit.cloneRepo(repoURL, repoName, user); // call function in app.js to run tidyGit
 	    res.sendStatus(200);
     });
 
     app.get('/user', ensureAuthenticated, function(req, res){
-        console.log(req.user);
         res.send(req.user);
         });
 
