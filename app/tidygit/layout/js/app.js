@@ -44,7 +44,7 @@ module.exports = /*function(repoURL, repoName, user) */{
                                 "Created new-branch on HEAD");
                         });
                 }).done(function () {
-                checkoutBranch();
+                checkoutBranch('testfile');
                 console.log("All done!");
 
             });
@@ -61,6 +61,28 @@ module.exports = /*function(repoURL, repoName, user) */{
 
 
 };
+
+/* CHECKOUT THE TIDYGIT BRANCH*/
+function checkoutBranch(repoName){
+
+    nodegit.Repository.open('./testfile').then(function(repo) {
+        return repo.getCurrentBranch().then(function(ref) {
+            const checkoutOpts = {
+                checkoutStrategy: nodegit.Checkout.STRATEGY.FORCE
+            };
+            return repo.checkoutBranch("TidyGit", checkoutOpts);
+        }).then(function () {
+            return repo.getCurrentBranch().then(function(ref) {
+                console.log("On " + ref.shorthand() + " " + ref.target());
+            });
+        });
+    }).catch(function (err) {
+        console.log(err);
+    }).done(function () {
+        /*parseDir(repoName);*/
+        console.log('Finished');
+    });
+}
 
 //find all files in github repo
 function parseDir(repoName) {
@@ -81,20 +103,6 @@ function parseDir(repoName) {
     });
 }
 
-function checkoutBranch(){
-    console.log('checkin out bro');
-    // OPEN THE REPO AND CHANGE TO THE TIDYGIT BRANCH
-    nodegit.Repository.open('./testfile')
-        .then(function (repo) {
-            repo.getBranch('refs/remotes/origin/TidyGit')
-                .then(function(reference){
-                    console.log('checkout', reference);
-                    //checkout branch
-                    return repo.checkoutRef(reference);
-                });
-
-        });
-}
 /*Read js file, beautify the file, replace the file*/
 function beautifyFile(file) {
     //read js file
