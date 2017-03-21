@@ -5,6 +5,11 @@ const fs = require('fs');
 const beautify = require('js-beautify').js_beautify;
 const moment = require('moment');
 const path = require('path');
+var promisify = require("promisify-node");
+var fse = promisify(require("fs-extra"));
+fse.ensureDir = promisify(fse.ensureDir);
+var simpleGit = require('simple-git')('./testfile');
+
 
 module.exports = /*function(repoURL, repoName, user) */{
 
@@ -42,7 +47,7 @@ module.exports = /*function(repoURL, repoName, user) */{
                                 "Created new-branch on HEAD");
                         });
                 }).done(function () {
-                checkoutBranch('testfile', user);
+                checkoutBranch('testfile', user, repoURL);
                 console.log("All done!");
 
             });
@@ -51,7 +56,7 @@ module.exports = /*function(repoURL, repoName, user) */{
 };
 
 /* CHECKOUT THE TIDYGIT BRANCH*/
-function checkoutBranch(repoName, user){
+function checkoutBranch(repoName, user, repoURL){
 
     nodegit.Repository.open('./' + repoName).then(function(repo) {
         return repo.getCurrentBranch().then(function(ref) {
@@ -67,13 +72,13 @@ function checkoutBranch(repoName, user){
     }).catch(function (err) {
         console.log(err);
     }).done(function () {
-        parseDir(repoName, user);
+        parseDir(repoName, user, repoURL);
         console.log('Finished');
     });
 }
 
 //find all files in github repo
-function parseDir(repoName, user) {
+function parseDir(repoName, user, repoURL) {
     console.log('parseDir user', user);
     execFile('find', [repoName], function (err, stdout, stderr) {
         //split the results with a space
@@ -88,7 +93,7 @@ function parseDir(repoName, user) {
             }
 
         });
-        githubCommit(repoName, user);
+        githubCommit(repoName, user, repoURL);
     });
 }
 
@@ -108,11 +113,12 @@ function beautifyFile(file) {
 }
 
 // Create a repo commit
-function githubCommit(repoName, user){
+function githubCommit(repoName, user, repoURL){
     console.log('githubCommit user', user);
     var _repository;
     var _index;
     var _oid;
+    var remote;
 
     //open a git repo
     nodegit.Repository.open(repoName)
@@ -151,12 +157,23 @@ function githubCommit(repoName, user){
             // the file is removed from the git repo, use fs.unlink now to remove it
             // from the filesystem.
             console.log("New Commit:", commitId.allocfmt());
-            githubPR(repoName, user);
         })
-        .done();
+        /// PUSH
+        .then(function() {
+            pushBranch(repoName, user, repoURL)
+        });
 
 }
 
+// Push branch to github
+//FIGURE OUT WAY TO PASS IN accessToken FOR PRIVATE REPOS*****
+function pushBranch(repoName, user, repoURL){
+    /*require('simple-git')()*/
+        simpleGit.push(['-u', 'origin', 'TidyGit'], function () {
+            console.log('push branch done');
+        });
+
+}
 // function for github pull request
 function githubPR(repoName, user) {
     console.log('GITHUBPR ==================================\N');
