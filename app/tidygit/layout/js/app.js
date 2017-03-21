@@ -23,44 +23,78 @@ module.exports = /*function(repoURL, repoName, user) */{
         })
     },
 
+
+
     cloneRepo : function(repoURL, repoName, user) {
         var signature = nodegit.Signature.create(user.name, user.email, moment().unix(), 0);
 
-        /* Use nodegit to clone the github repo */
+        /* CLONE THE GITHUB REPO */
         nodegit.Clone(repoURL, repoName).then(function (repository) {
+            //OPEN THE REPO AND CREATE A NEW BRANCH CALLED TidyGit
+            nodegit.Repository.open('./testfile')
+                .then(function (repo) {
+                    // Create a new branch on head
+                    return repo.getHeadCommit()
+                        .then(function (commit) {
+                            return repo.createBranch(
+                                "TidyGit",
+                                commit,
+                                0,
+                                repo.defaultSignature(),
+                                "Created new-branch on HEAD");
+                        });
+                }).done(function () {
+                checkoutBranch();
+                console.log("All done!");
 
-            parseDir(repoName);
-        });
-
-        //find all files in github repo
-        function parseDir(repoName) {
-            execFile('find', [repoName], function (err, stdout, stderr) {
-                //split the results with a space
-                /*console.log(repoName + " parsed");*/
-                var fileList = stdout.split('\n');
-
-                //for each file search if it includes .js and doesn't include bower(to reduce results)
-                fileList.forEach(function (file) {
-                    if (file.includes(".js") && !file.includes("bower")) {
-                        //call function to beautify the js file
-                        beautifyFile(file);
-                    }
-
-                });
-                githubCommit();
             });
-        }
+
+
+        });
     },
 
 
     // function to delete repo dir
     deleteRepo: function(file){
 
-    },
+    }
 
 
 };
 
+//find all files in github repo
+function parseDir(repoName) {
+    execFile('find', [repoName], function (err, stdout, stderr) {
+        //split the results with a space
+        /*console.log(repoName + " parsed");*/
+        var fileList = stdout.split('\n');
+
+        //for each file search if it includes .js and doesn't include bower(to reduce results)
+        fileList.forEach(function (file) {
+            if (file.includes(".js") && !file.includes("bower")) {
+                //call function to beautify the js file
+                beautifyFile(file);
+            }
+
+        });
+        githubCommit();
+    });
+}
+
+function checkoutBranch(){
+    console.log('checkin out bro');
+    // OPEN THE REPO AND CHANGE TO THE TIDYGIT BRANCH
+    nodegit.Repository.open('./testfile')
+        .then(function (repo) {
+            repo.getBranch('refs/remotes/origin/TidyGit')
+                .then(function(reference){
+                    console.log('checkout', reference);
+                    //checkout branch
+                    return repo.checkoutRef(reference);
+                });
+
+        });
+}
 /*Read js file, beautify the file, replace the file*/
 function beautifyFile(file) {
     //read js file
@@ -86,6 +120,7 @@ function githubCommit(){
     //open a git repo
     nodegit.Repository.open("testfile")
         .then(function(repo) {
+            console.log('commit repo', repo);
             _repository = repo;
             return repo.refreshIndex();
         })
