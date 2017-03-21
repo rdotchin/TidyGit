@@ -108,18 +108,21 @@ module.exports = function(repoURL, repoName, user) {
                 // the file is removed from the git repo, use fs.unlink now to remove it
                 // from the filesystem.
                 console.log("New Commit:", commitId.allocfmt());
-                /*githubPR();*/
+                githubPR();
             })
             .done();
 
     }
     // function for github pull request
-    function githubPR(){
-        /*console.log("githubPRRepoName", repoName);*/
+    function githubPR() {
+
         var options = {
-            url: 'https://api.github.com/repos/rdotchin/' + repoName + '/pulls',
-            headers: {
-                'User-Agent': 'request',
+            /*'https://api.github.com/repos/rdotchin/' + repoName + '/pulls'*/
+            'url': 'https://api.github.com/repos/rdotchin/testfile/pulls',
+
+            'headers': {
+                'Authorization': user.accessToken,
+                'User-Agent': 'rdotchin',
                 'title': 'TidyGit',
                 'body': 'Pull this in!',
                 'head': 'master',
@@ -127,9 +130,11 @@ module.exports = function(repoURL, repoName, user) {
 
             }
         };
+        console.log(user.accessToken);
         request.post(options, function(err, httpResponse, body){
-            console.log("githubPR");
-            console.log(httpResponse);
+            console.log("githubPR, http code", httpResponse);
+
+            /*console.log(httpResponse);*/
             console.log(body);
         })
     }

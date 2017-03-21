@@ -38,29 +38,60 @@ passport.use(new GitHubStrategy({
     callbackURL: "http://127.0.0.1:8080/auth/github/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    /*console.log(typeof accessToken);
-    console.log(profile);*/
-  	// If the user is not in the database it will create them
-    db.Users.findOrCreate({ 
+      /*console.log('accessToken', accessToken);*/
+
+      /*if no user in db one will be created.  If there is a user it
+        will update the accessToken, find the updated user and return it*/
+    db.Users.findOne({
     	where: {
     		githubId: profile.id
-    	},
-    	defaults: {
-    		name: profile.displayName,
-            accessToken: accessToken,
-    		username: profile.username,
-    		profileUrl: profile.profileUrl,
-    		email: profile.emails[0].value,
-    		photo: profile.photos[0].value
-    	}
-    })
-        .then(function(user, created) {
-                /*console.log(user);*/
-
-                //null is where err should be
-                return done(null, user);
-            });
-  }
+    	}}).then(function(user) {
+               /* console.log('USER', user);*/
+    	        if(user){
+    	            console.log('if user', user);
+                    //update
+                    console.log('update token', accessToken);
+                    //UPDATE USER
+                     db.Users.update({
+                        accessToken: accessToken
+                    }, {
+                        where: {githubId: user.githubId}
+                    }).then(function(data){
+                        // FIND UPDATED USER AND RETURN IT TO PASSPORT
+                        db.Users.findOne({
+                             where: {
+                                 githubId: profile.id
+                             }
+                        }).then(function(updatedUser){
+                            /*console.log("updated user", updatedUser);*/
+                             return done(null, updatedUser);
+                         });
+                    })
+                }
+                else{
+                    //IF NO USER, CREATE ONE
+                    db.Users.create({
+                        name: user.name,
+                        accessToken: user.accessToken,
+                        githubId: user.githubId,
+                        username: user.username,
+                        profileUrl: user.profileUrl,
+                        email: user.email,
+                        photo: user.photo
+                    }).then(function(data){
+                        // FIND CREATED USER AND SEND TO PASSPORT
+                        db.Users.findOne({
+                            where: {
+                                githubId: profile.id
+                            }
+                        }).then(function(updatedUser){
+                            /*console.log("updated user", updatedUser);*/
+                            return done(null, updatedUser);
+                        });
+                    })
+                }
+        });
+    }
 ));
 
 /*================================PASSPORT GITHUB END=================================================*/

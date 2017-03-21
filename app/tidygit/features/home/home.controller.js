@@ -12,15 +12,11 @@ function HomeCtrl(user, $http){
 	their github repos*/
     $http.get('/user')
         .then(function(resp){
-            /*console.log(resp.data);*/
-			var username = resp.data[0].username;
-			/*Lockr.set('username', username);
-			console.log("lockr", Lockr.get('username'));*/
-			resp.data.forEach(function(data){
-			    vm.user.push(data);
-            });
+            console.log(resp.data);
+			var username = resp.data.username;
+
 			console.log(vm.user);
-			getRepo(username);
+			getRepo(resp.data.username);
         });
 
     /*After getting the user data this function will be invoked to retrieve all of

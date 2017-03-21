@@ -44,7 +44,7 @@ module.exports = function(app){
     });
 
     app.get('/user', ensureAuthenticated, function(req, res){
-        /*console.log(req.user);*/
+        console.log(req.user);
         res.send(req.user);
         });
 
