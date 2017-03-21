@@ -8,6 +8,21 @@ const path = require('path');
 
 module.exports = /*function(repoURL, repoName, user) */{
 
+    /* will return a list of all the users repos, invoked in passport-routes.js*/
+    reposList: function(user, token, cb){
+        const options = {
+            'url': 'https://api.github.com/user/repos?access_token=' + token,
+            'headers': {
+                'User-Agent': user
+            }
+        };
+        request(options, function(err, response, body){
+            cb(body);
+            /*console.log('\nRESPONSE', response);
+             console.log('\nBODY', body);*/
+        })
+    },
+
     cloneRepo : function(repoURL, repoName, user) {
         var signature = nodegit.Signature.create(user.name, user.email, moment().unix(), 0);
 
@@ -36,112 +51,102 @@ module.exports = /*function(repoURL, repoName, user) */{
             });
         }
     },
-    /*Read js file, beautify the file, replace the file*/
-    beautifyFile: function(file) {
-        //read js file
-        fs.readFile(file, 'utf8', function (err, data) {
-            if (err) {
-                throw err;
-            }
-            /* Beautify the foo.js file and replace it*/
-            fs.writeFile(file, beautify(data, {indent_size: 6}, function(err) {
-                    if (err) throw err;
-        }))
-        });
-        //call function to create a github pull request
-    },
 
-    // Create a repo commit
-    githubCommit: function(){
-
-        var _repository;
-        var _index;
-        var _oid;
-
-        //open a git repo
-        nodegit.Repository.open("testfile")
-            .then(function(repo) {
-                _repository = repo;
-                return repo.refreshIndex();
-            })
-            .then(function(index){
-                _index = index;
-            })
-            .then(function() {
-                return _index.write();
-            })
-            .then(function() {
-                return _index.writeTree();
-            })
-            .then(function(oid) {
-                console.log("oid");
-                _oid = oid;
-                return nodegit.Reference.nameToId(_repository, "HEAD");
-            })
-            .then(function(head) {
-                return _repository.getCommit(head);
-            })
-            .then(function(parent) {
-                var author = nodegit.Signature.create("Richard Dotchin",
-                    "richard.dotchin@gmail.com", moment().unix(), 0);
-                var committer = nodegit.Signature.create("Richard Dotchin",
-                    "richard.dotchin@gmail.com", moment().unix(), 0);
-
-                return _repository.createCommit("HEAD", author, committer,
-                    "TidyGit", _oid, [parent]);
-            })
-            .then(function(commitId) {
-                // the file is removed from the git repo, use fs.unlink now to remove it
-                // from the filesystem.
-                console.log("New Commit:", commitId.allocfmt());
-                githubPR();
-            })
-            .done();
-
-    },
-    // function for github pull request
-    githubPR: function() {
-
-        var options = {
-            /*'https://api.github.com/repos/rdotchin/' + repoName + '/pulls'*/
-            'url': 'https://api.github.com/repos/rdotchin/testfile/pulls',
-
-            'headers': {
-                'Authorization': user.accessToken,
-                'User-Agent': 'rdotchin',
-                'title': 'TidyGit',
-                'body': 'Pull this in!',
-                'head': 'master',
-                'base': 'master'
-
-            }
-        };
-        console.log(user.accessToken);
-        request.post(options, function(err, httpResponse, body){
-            console.log("githubPR, http code", httpResponse);
-
-            /*console.log(httpResponse);*/
-            console.log(body);
-        })
-    },
 
     // function to delete repo dir
     deleteRepo: function(file){
 
     },
-    /* will return a list of all the users repos, invoked in passport-routes.js*/
-    reposList: function(user, token, cb){
-        const options = {
-            'url': 'https://api.github.com/user/repos?access_token=' + token,
-            'headers': {
-                'User-Agent': user
-            }
-        };
-        request(options, function(err, response, body){
-            cb(body);
-            /*console.log('\nRESPONSE', response);
-             console.log('\nBODY', body);*/
-        })
-    }
+
 
 };
+
+/*Read js file, beautify the file, replace the file*/
+function beautifyFile(file) {
+    //read js file
+    fs.readFile(file, 'utf8', function (err, data) {
+        if (err) {
+            throw err;
+        }
+        /* Beautify the foo.js file and replace it*/
+        fs.writeFile(file, beautify(data, {indent_size: 6}, function(err) {
+            if (err) throw err;
+        }))
+    });
+    //call function to create a github pull request
+}
+
+// Create a repo commit
+function githubCommit(){
+
+    var _repository;
+    var _index;
+    var _oid;
+
+    //open a git repo
+    nodegit.Repository.open("testfile")
+        .then(function(repo) {
+            _repository = repo;
+            return repo.refreshIndex();
+        })
+        .then(function(index){
+            _index = index;
+        })
+        .then(function() {
+            return _index.write();
+        })
+        .then(function() {
+            return _index.writeTree();
+        })
+        .then(function(oid) {
+            console.log("oid");
+            _oid = oid;
+            return nodegit.Reference.nameToId(_repository, "HEAD");
+        })
+        .then(function(head) {
+            return _repository.getCommit(head);
+        })
+        .then(function(parent) {
+            var author = nodegit.Signature.create("Richard Dotchin",
+                "richard.dotchin@gmail.com", moment().unix(), 0);
+            var committer = nodegit.Signature.create("Richard Dotchin",
+                "richard.dotchin@gmail.com", moment().unix(), 0);
+
+            return _repository.createCommit("HEAD", author, committer,
+                "TidyGit", _oid, [parent]);
+        })
+        .then(function(commitId) {
+            // the file is removed from the git repo, use fs.unlink now to remove it
+            // from the filesystem.
+            console.log("New Commit:", commitId.allocfmt());
+           /* githubPR();*/
+        })
+        .done();
+
+}
+
+// function for github pull request
+function githubPR() {
+
+    var options = {
+        /*'https://api.github.com/repos/rdotchin/' + repoName + '/pulls'*/
+        'url': 'https://api.github.com/repos/rdotchin/testfile/pulls',
+
+        'headers': {
+            'Authorization': user.accessToken,
+            'User-Agent': 'rdotchin',
+            'title': 'TidyGit',
+            'body': 'Pull this in!',
+            'head': 'master',
+            'base': 'master'
+
+        }
+    };
+    console.log(user.accessToken);
+    request.post(options, function(err, httpResponse, body){
+        console.log("githubPR, http code", httpResponse);
+
+        /*console.log(httpResponse);*/
+        console.log(body);
+    })
+}

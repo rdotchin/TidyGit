@@ -49,7 +49,7 @@ module.exports = function(app){
 	app.post('/clean/repo', function(req, res){
 	    var repoURL = req.body.repoUrl;
 	    var repoName = req.body.repoName;
-		const user = req.user[0];
+		const user = req.user;
 	    tidyGit.cloneRepo(repoURL, './' + repoName, user); // call function in app.js to run tidyGit
 	    res.sendStatus(200);
     });

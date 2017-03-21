@@ -16,26 +16,23 @@ function HomeCtrl(user, $http){
 			var username = resp.data.username;
 
 			console.log(vm.user);
-			getRepo(resp.data.username);
+			/*getRepo(resp.data.username);*/
         });
 
     $http.get('/repos')
 		.then(function(resp){
 			console.log(resp.data);
-		});
+            resp.data.forEach(function(data, indx){
+                vm.repoArr.push(data);
+            });
+            console.log(vm.repoArr);
+
+        });
+
     /*After getting the user data this function will be invoked to retrieve all of
       the users GitHub repos and put the url and name of each repo into an array to
       be displayed on the page for the user to select*/
-     function getRepo(username) {
-     	$http.get('https://api.github.com/users/' + username + '/repos')
-			.then(function(resp){
-                resp.data.forEach(function(data, indx){
-                    vm.repoArr.push(data);
-                });
-                console.log(vm.repoArr);
 
-			})
-	 }
 
 	 /* After receiving the users github repos (the user will eventually select but for now)
 	   We will send the first repo responses URL and Name.  The app on the server side will
