@@ -18,8 +18,6 @@ module.exports = /*function(repoURL, repoName, user) */{
         };
         request(options, function(err, response, body){
             cb(body);
-            /*console.log('\nRESPONSE', response);
-             console.log('\nBODY', body);*/
         })
     },
 
@@ -44,26 +42,16 @@ module.exports = /*function(repoURL, repoName, user) */{
                                 "Created new-branch on HEAD");
                         });
                 }).done(function () {
-                checkoutBranch('testfile');
+                checkoutBranch('testfile', user);
                 console.log("All done!");
 
             });
-
-
         });
-    },
-
-
-    // function to delete repo dir
-    deleteRepo: function(file){
-
     }
-
-
 };
 
 /* CHECKOUT THE TIDYGIT BRANCH*/
-function checkoutBranch(repoName){
+function checkoutBranch(repoName, user){
 
     nodegit.Repository.open('./' + repoName).then(function(repo) {
         return repo.getCurrentBranch().then(function(ref) {
@@ -79,13 +67,14 @@ function checkoutBranch(repoName){
     }).catch(function (err) {
         console.log(err);
     }).done(function () {
-        parseDir(repoName);
+        parseDir(repoName, user);
         console.log('Finished');
     });
 }
 
 //find all files in github repo
-function parseDir(repoName) {
+function parseDir(repoName, user) {
+    console.log('parseDir user', user);
     execFile('find', [repoName], function (err, stdout, stderr) {
         //split the results with a space
         /*console.log(repoName + " parsed");*/
@@ -99,7 +88,7 @@ function parseDir(repoName) {
             }
 
         });
-        githubCommit();
+        githubCommit(repoName, user);
     });
 }
 
@@ -119,14 +108,14 @@ function beautifyFile(file) {
 }
 
 // Create a repo commit
-function githubCommit(){
-
+function githubCommit(repoName, user){
+    console.log('githubCommit user', user);
     var _repository;
     var _index;
     var _oid;
 
     //open a git repo
-    nodegit.Repository.open("testfile")
+    nodegit.Repository.open(repoName)
         .then(function(repo) {
             console.log('commit repo', repo);
             _repository = repo;
@@ -162,15 +151,17 @@ function githubCommit(){
             // the file is removed from the git repo, use fs.unlink now to remove it
             // from the filesystem.
             console.log("New Commit:", commitId.allocfmt());
-           /* githubPR();*/
+            githubPR(repoName, user);
         })
         .done();
 
 }
 
 // function for github pull request
-function githubPR() {
-
+function githubPR(repoName, user) {
+    console.log('GITHUBPR ==================================\N');
+    console.log('repoName', repoName);
+    console.log(user);
     var options = {
         /*'https://api.github.com/repos/rdotchin/' + repoName + '/pulls'*/
         'url': 'https://api.github.com/repos/rdotchin/testfile/pulls',
@@ -180,16 +171,21 @@ function githubPR() {
             'User-Agent': 'rdotchin',
             'title': 'TidyGit',
             'body': 'Pull this in!',
-            'head': 'master',
+            'head': 'TidyGit',
             'base': 'master'
 
         }
     };
-    console.log(user.accessToken);
+   /* console.log(user.accessToken);
     request.post(options, function(err, httpResponse, body){
         console.log("githubPR, http code", httpResponse);
 
-        /*console.log(httpResponse);*/
+        /!*console.log(httpResponse);*!/
         console.log(body);
-    })
+    })*/
+}
+
+// function to delete repo dir
+function deleteRepo(file) {
+
 }
