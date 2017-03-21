@@ -15,7 +15,7 @@ module.exports = function(app){
     }
 
     /*route to GitHub for authenticating the user*/
-	app.get('/auth/github', passport.authenticate('github'));
+	app.get('/auth/github', passport.authenticate('github', {scope: ['repo']}));
 
     /*callback route from githut confirming the user was authenticated, if not, redirected back to the
       login page CHANGE THE '/' WHEN CHANGING THE LOGIN URL!!!!!!!!!!*/
@@ -47,9 +47,11 @@ module.exports = function(app){
 
     /* route receiving the repo url and name that that the user would like to tidy FOR TESTING PURPOSES CURRENTLY*/
 	app.post('/clean/repo', function(req, res){
-	    var repoURL = req.body.repoUrl;
-	    var repoName = req.body.repoName;
-		const user = req.user;
+	    /*var repoURL = req.body.repoUrl;*/
+        var repoName = req.body.repoName;
+        const user = req.user;
+        var repoURL = 'https://' + user.accessToken + ':x-oauth-basic@github.com/' + user.username + '/' + repoName + '.git';
+
 	    tidyGit.cloneRepo(repoURL, './' + repoName, user); // call function in app.js to run tidyGit
 	    res.sendStatus(200);
     });

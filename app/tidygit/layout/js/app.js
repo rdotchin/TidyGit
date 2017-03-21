@@ -8,7 +8,7 @@ const path = require('path');
 var promisify = require("promisify-node");
 var fse = promisify(require("fs-extra"));
 fse.ensureDir = promisify(fse.ensureDir);
-var simpleGit = require('simple-git')('./testfile');
+var simpleGit = require('simple-git');
 
 
 module.exports = /*function(repoURL, repoName, user) */{
@@ -34,7 +34,7 @@ module.exports = /*function(repoURL, repoName, user) */{
         /* CLONE THE GITHUB REPO */
         nodegit.Clone(repoURL, repoName).then(function (repository) {
             //OPEN THE REPO AND CREATE A NEW BRANCH CALLED TidyGit
-            nodegit.Repository.open('./testfile')
+            nodegit.Repository.open('./' + repoName)
                 .then(function (repo) {
                     // Create a new branch on head
                     return repo.getHeadCommit()
@@ -47,7 +47,7 @@ module.exports = /*function(repoURL, repoName, user) */{
                                 "Created new-branch on HEAD");
                         });
                 }).done(function () {
-                checkoutBranch('testfile', user, repoURL);
+                checkoutBranch(repoName, user, repoURL);
                 console.log("All done!");
 
             });
@@ -89,16 +89,24 @@ function parseDir(repoName, user, repoURL) {
         fileList.forEach(function (file) {
             if (file.includes(".js") && !file.includes("bower")) {
                 //call function to beautify the js file
-                beautifyFile(file);
+                beautifyFile(repoName, user, repoURL, file);
             }
 
         });
-        githubCommit(repoName, user, repoURL);
+
     });
 }
 
+function gitAdd(repoName, user, repoURL){
+    simpleGit('./' + repoName).raw(['add', '-A'], function(err, result){
+        if(err) throw err;
+        console.log("git add -A", result);
+        githubCommit(repoName, user, repoURL);
+    })
+}
+
 /*Read js file, beautify the file, replace the file*/
-function beautifyFile(file) {
+function beautifyFile(repoName, user, repoURL, file) {
     //read js file
     fs.readFile(file, 'utf8', function (err, data) {
         if (err) {
@@ -109,6 +117,7 @@ function beautifyFile(file) {
             if (err) throw err;
         }))
     });
+    gitAdd(repoName, user, repoURL);
     //call function to create a github pull request
 }
 
@@ -169,7 +178,7 @@ function githubCommit(repoName, user, repoURL){
 //FIGURE OUT WAY TO PASS IN accessToken FOR PRIVATE REPOS*****
 function pushBranch(repoName, user, repoURL){
     /*require('simple-git')()*/
-        simpleGit.push(['-u', 'origin', 'TidyGit'], function () {
+        simpleGit('./' + repoName).push(['origin', 'TidyGit:TidyGit'], function () {
             console.log('push branch done');
         });
 
