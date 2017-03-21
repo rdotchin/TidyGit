@@ -65,7 +65,7 @@ module.exports = /*function(repoURL, repoName, user) */{
 /* CHECKOUT THE TIDYGIT BRANCH*/
 function checkoutBranch(repoName){
 
-    nodegit.Repository.open('./testfile').then(function(repo) {
+    nodegit.Repository.open('./' + repoName).then(function(repo) {
         return repo.getCurrentBranch().then(function(ref) {
             const checkoutOpts = {
                 checkoutStrategy: nodegit.Checkout.STRATEGY.FORCE
@@ -79,7 +79,7 @@ function checkoutBranch(repoName){
     }).catch(function (err) {
         console.log(err);
     }).done(function () {
-        /*parseDir(repoName);*/
+        parseDir(repoName);
         console.log('Finished');
     });
 }
