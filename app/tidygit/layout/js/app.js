@@ -1,14 +1,17 @@
-const nodegit = require("nodegit"); // Used to clone github repos
+const nodegit = require("nodegit");
 const execFile = require('child_process').execFile;
 const request = require('request');
 const fs = require('fs');
 const beautify = require('js-beautify').js_beautify;
 const moment = require('moment');
-const path = require('path');
-var promisify = require("promisify-node");
-var fse = promisify(require("fs-extra"));
-fse.ensureDir = promisify(fse.ensureDir);
-var simpleGit = require('simple-git');
+var simpleGit = require('simple-git'); // Used for git add -A
+
+//GLOBAL VARIABLES
+var globalUser;
+var globalToken;
+var globalURL;
+var globalRepoLocal;
+
 
 
 module.exports = /*function(repoURL, repoName, user) */{
@@ -29,6 +32,12 @@ module.exports = /*function(repoURL, repoName, user) */{
 
     /*CLONE THE GITHUB REPO */
     cloneRepo : function(repoURL, repoName, user) {
+        //set global variables
+        globalUser = user;
+        globalToken = user.accessToken;
+        globalURL = repoURL;
+        globalRepoLocal = __dirname + '/' + repoName;
+
         var signature = nodegit.Signature.create(user.name, user.email, moment().unix(), 0);
 
         nodegit.Clone(repoURL, __dirname + '/' + repoName).then(function (repository) {
@@ -176,6 +185,11 @@ function pushBranch(repoName, user, repoURL){
 }
 // function for github pull request
 function githubPR(repoName, user) {
+    console.log('GLOBAL VARIABLES =============== \N');
+    console.log('globalUser', globalUser);
+    console.log('globalToken', globalToken);
+    console.log('globalURL', globalURL);
+    console.log('globalRepoLocal', globalRepoLocal);
     var header = {
         Authorization: 'token ' + user.accessToken,
         "User-Agent": "rdotchin",
@@ -201,13 +215,13 @@ function githubPR(repoName, user) {
             console.log(err);
             throw err
         }
-        console.log('headers', res.headers);
+        /*console.log('headers', res.headers);*/
         console.log('statusCode', res.statusCode);
-        console.log('body', body);
+       /* console.log('body', body);*/
     })
 }
 
 // function to delete repo dir
-function deleteRepo(file) {
+function deleteRepo(repoName) {
 
 }

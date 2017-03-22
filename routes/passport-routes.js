@@ -1,6 +1,5 @@
 const passport = require('passport');
 const tidyGit = require('../app/tidygit/layout/js/app.js');
-const request = require('request');
 
 module.exports = function(app){
 
