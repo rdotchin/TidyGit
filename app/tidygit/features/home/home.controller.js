@@ -7,6 +7,26 @@ function HomeCtrl(user, $http){
 	const vm = this;
     vm.repoArr = [];
     vm.user = [];
+    /*================PUSHER===================================*/
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('cdd662307ca417771c70', {
+        encrypted: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+    	if(data.message === 201){
+    		console.log("success")
+		}
+		else{
+    		console.log("fail")
+    	}
+    	alert(typeof data.message);
+    });
+
+
 
 	/* Get request to retrieve the users information.  Need the username to pull
 	their github repos*/

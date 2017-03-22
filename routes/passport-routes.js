@@ -52,6 +52,10 @@ module.exports = function(app){
         var repoURL = 'https://' + user.accessToken + ':x-oauth-basic@github.com/' + user.username + '/' + repoName + '.git';
 
 	    tidyGit.cloneRepo(repoURL, repoName, user); // call function in app.js to run tidyGit
+        /*tidyGit.cloneRepo(repoURL, repoName, user, function(stausNumber){
+            res.sendstatus(statusNumber);
+            in angular....if(201) send success, else something went wrong
+        }*/
 	    res.sendStatus(200);
     });
 

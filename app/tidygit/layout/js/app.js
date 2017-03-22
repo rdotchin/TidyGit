@@ -6,6 +6,16 @@ const beautify = require('js-beautify').js_beautify;
 const moment = require('moment');
 var simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
+const Pusher = require('pusher');
+
+var pusher = new Pusher({
+    appId: '317526',
+    key: 'cdd662307ca417771c70',
+    secret: 'd571a85c4f5529524913',
+    encrypted: true
+});
+
+
 
 //GLOBAL VARIABLES
 var GlobalUser;
@@ -207,6 +217,9 @@ function githubPR() {
             console.log(err);
             throw err
         }
+        pusher.trigger('my-channel', 'my-event', {
+            "message": res.statusCode
+        });
         /*console.log('headers', res.headers);*/
         console.log('statusCode', res.statusCode);
         deleteRepo();
