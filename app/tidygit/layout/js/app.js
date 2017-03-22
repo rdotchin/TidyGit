@@ -170,35 +170,41 @@ function pushBranch(repoName, user, repoURL){
     /*require('simple-git')()*/
         simpleGit(repoName).push(['origin', 'TidyGit:TidyGit'], function () {
             console.log('push branch done');
+            githubPR(repoName, user);
         });
 
 }
 // function for github pull request
 function githubPR(repoName, user) {
-    console.log('GITHUBPR ==================================\N');
-    console.log('repoName', repoName);
-    console.log(user);
-    var options = {
-        /*'https://api.github.com/repos/rdotchin/' + repoName + '/pulls'*/
-        'url': 'https://api.github.com/repos/rdotchin/testfile/pulls',
-
-        'headers': {
-            'Authorization': user.accessToken,
-            'User-Agent': 'rdotchin',
-            'title': 'TidyGit',
-            'body': 'Pull this in!',
-            'head': 'TidyGit',
-            'base': 'master'
-
-        }
+    var header = {
+        Authorization: 'token ' + user.accessToken,
+        "User-Agent": "rdotchin",
+        "scopes": "repo"
     };
-   /* console.log(user.accessToken);
-    request.post(options, function(err, httpResponse, body){
-        console.log("githubPR, http code", httpResponse);
+    var body = {
+        "title": "TidyGit Complete",
+        "body": "TidyGit has cleaned up all the JavaScript files",
+        "head": "TidyGit",
+        "base": "master"
+    };
+    var url = "https://api.github.com/repos/rdotchin/testfile/pulls";
+    var options = {
+        method: 'post',
+        headers: header,
+        body: body,
+        json: true,
+        url: url
+    };
 
-        /!*console.log(httpResponse);*!/
-        console.log(body);
-    })*/
+    request.post(options, function(err, res, body){
+        if (err) {
+            console.log(err);
+            throw err
+        }
+        console.log('headers', res.headers);
+        console.log('statusCode', res.statusCode);
+        console.log('body', body);
+    })
 }
 
 // function to delete repo dir
