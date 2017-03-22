@@ -15,9 +15,7 @@ var GlobalRepoName;
 var GlobalRepoLocal;
 
 
-
-
-module.exports = /*function(repoURL, repoName, user) */{
+module.exports = {
 
     /* will return a list of all the users repos, invoked in passport-routes.js*/
     reposList: function(user, token, cb){
@@ -61,8 +59,6 @@ module.exports = /*function(repoURL, repoName, user) */{
                 }).done(function () {
                 // once the new branch is created change to that branch
                 checkoutBranch();
-                /*console.log("All done!");*/
-
             });
         });
     }
@@ -79,7 +75,6 @@ function checkoutBranch(){
             return repo.checkoutBranch("TidyGit", checkoutOpts);
         }).then(function () {
             return repo.getCurrentBranch().then(function(ref) {
-               /* console.log("On " + ref.shorthand() + " " + ref.target());*/
             });
         });
     }).catch(function (err) {
@@ -87,7 +82,6 @@ function checkoutBranch(){
     }).done(function () {
         // Parse the directory
         parseDir();
-        /*console.log('Finished');*/
     });
 }
 
@@ -127,7 +121,6 @@ function tidyNextFile() {
 /* After the files have run through js-beautify and git add -A this function
    will git commit -m "TidyGit"*/
 function githubCommit(){
-   /* console.log('githubCommit user', user);*/
     var _repository;
     var _index;
     var _oid;
@@ -158,10 +151,10 @@ function githubCommit(){
             return _repository.getCommit(head);
         })
         .then(function(parent) {
-            var author = nodegit.Signature.create("Richard Dotchin",
-                "richard.dotchin@gmail.com", moment().unix(), 0);
-            var committer = nodegit.Signature.create("Richard Dotchin",
-                "richard.dotchin@gmail.com", moment().unix(), 0);
+            var author = nodegit.Signature.create(GlobalUser.name,
+                GlobalUser.email, moment().unix(), 0);
+            var committer = nodegit.Signature.create(GlobalUser.name,
+                GlobalUser.email, moment().unix(), 0);
 
             return _repository.createCommit("HEAD", author, committer,
                 "TidyGit", _oid, [parent]);
