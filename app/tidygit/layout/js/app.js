@@ -5,12 +5,15 @@ const fs = require('fs');
 const beautify = require('js-beautify').js_beautify;
 const moment = require('moment');
 var simpleGit = require('simple-git'); // Used for git add -A
+const rimraf = require('rimraf'); // npm package to delete directory
 
 //GLOBAL VARIABLES
-var globalUser;
-var globalToken;
-var globalURL;
-var globalRepoLocal;
+var GlobalUser;
+var GlobalToken;
+var GlobalRepoURL;
+var GlobalRepoName;
+var GlobalRepoLocal;
+
 
 
 
@@ -33,16 +36,17 @@ module.exports = /*function(repoURL, repoName, user) */{
     /*CLONE THE GITHUB REPO */
     cloneRepo : function(repoURL, repoName, user) {
         //set global variables
-        globalUser = user;
-        globalToken = user.accessToken;
-        globalURL = repoURL;
-        globalRepoLocal = __dirname + '/' + repoName;
+        GlobalUser = user;
+        GlobalToken = user.accessToken;
+        GlobalRepoURL = repoURL;
+        GlobalRepoLocal = __dirname + '/' + repoName;
+        GlobalRepoName = repoName;
 
-        var signature = nodegit.Signature.create(user.name, user.email, moment().unix(), 0);
+        var signature = nodegit.Signature.create(GlobalUser.name, GlobalUser.email, moment().unix(), 0);
 
-        nodegit.Clone(repoURL, __dirname + '/' + repoName).then(function (repository) {
+        nodegit.Clone(GlobalRepoURL, GlobalRepoLocal).then(function (repository) {
             //OPEN THE REPO AND CREATE A NEW BRANCH CALLED TidyGit
-            nodegit.Repository.open(__dirname + '/' + repoName)
+            nodegit.Repository.open(GlobalRepoLocal)
                 .then(function (repo) {
                     // Create a new branch on head
                     return repo.getHeadCommit()
@@ -56,7 +60,7 @@ module.exports = /*function(repoURL, repoName, user) */{
                         });
                 }).done(function () {
                 // once the new branch is created change to that branch
-                checkoutBranch(repoName, user, repoURL);
+                checkoutBranch();
                 /*console.log("All done!");*/
 
             });
@@ -65,9 +69,9 @@ module.exports = /*function(repoURL, repoName, user) */{
 };
 
 /* CHECKOUT THE TIDYGIT BRANCH*/
-function checkoutBranch(repoName, user, repoURL){
+function checkoutBranch(){
 
-    nodegit.Repository.open(__dirname + '/' + repoName).then(function(repo) {
+    nodegit.Repository.open(GlobalRepoLocal).then(function(repo) {
         return repo.getCurrentBranch().then(function(ref) {
             const checkoutOpts = {
                 checkoutStrategy: nodegit.Checkout.STRATEGY.FORCE
@@ -82,7 +86,7 @@ function checkoutBranch(repoName, user, repoURL){
         console.log(err);
     }).done(function () {
         // Parse the directory
-        parseDir(repoName, user, repoURL);
+        parseDir();
         /*console.log('Finished');*/
     });
 }
@@ -90,39 +94,39 @@ function checkoutBranch(repoName, user, repoURL){
 /*Find all files in the directory, put the files in an array, only select
   .js files and tidy the js files*/
 var filesToUpdate = [];
-function parseDir(repoName, user, repoURL) {
-    execFile('find', [__dirname + '/' + repoName], function (err, stdout, stderr) {
+function parseDir() {
+    execFile('find', [GlobalRepoLocal], function (err, stdout, stderr) {
         filesToUpdate = stdout.split('\n');
         filesToUpdate = filesToUpdate.filter(function(file) {
             return file.includes(".js") && !file.includes("bower")
         });
 
-        tidyNextFile(repoName, user, repoURL);
+        tidyNextFile();
     });
 }
 
 /* Tidy each .js file.  If there is no file then run the simple git command to
    git commit -A follwed by invoking the function to github commit*/
-function tidyNextFile(repoName, user, repoURL) {
+function tidyNextFile() {
     var file = filesToUpdate.pop();
     //if no file, git add -A then invoke the git commit function
     if(!file) {
-        return simpleGit(__dirname + '/' + repoName).raw(['add', '-A'], function() {
-            githubCommit(__dirname + '/' + repoName, user, repoURL);
+        return simpleGit(GlobalRepoLocal).raw(['add', '-A'], function() {
+            githubCommit();
         });
     }
     //read the .js file and write it using js-beautify, then run the tidy function again
     fs.readFile(file, 'utf8', function (err, data) {
         fs.writeFile(file, beautify(data, {indent_size: 6}), function() {
             console.log('successful write');
-            tidyNextFile(repoName, user, repoURL);
+            tidyNextFile();
         })
     });
 }
 
 /* After the files have run through js-beautify and git add -A this function
    will git commit -m "TidyGit"*/
-function githubCommit(repoName, user, repoURL){
+function githubCommit(){
    /* console.log('githubCommit user', user);*/
     var _repository;
     var _index;
@@ -130,7 +134,7 @@ function githubCommit(repoName, user, repoURL){
     var remote;
 
     //open a git repo
-    nodegit.Repository.open(repoName)
+    nodegit.Repository.open(GlobalRepoLocal)
         .then(function(repo) {
            /* console.log('commit repo', repo);*/
             _repository = repo;
@@ -168,40 +172,35 @@ function githubCommit(repoName, user, repoURL){
         /// PUSH
         .then(function() {
             //invoke the git push origin TidyGit function
-            pushBranch(repoName, user, repoURL)
+            pushBranch()
         });
 
 }
 
 // git push origin TidyGit
 //FIGURE OUT WAY TO PASS IN accessToken FOR PRIVATE REPOS*****
-function pushBranch(repoName, user, repoURL){
+function pushBranch(){
     /*require('simple-git')()*/
-        simpleGit(repoName).push(['origin', 'TidyGit:TidyGit'], function () {
+        simpleGit(GlobalRepoLocal).push(['origin', 'TidyGit:TidyGit'], function () {
             console.log('push branch done');
-            githubPR(repoName, user);
+            githubPR();
         });
 
 }
 // function for github pull request
-function githubPR(repoName, user) {
-    console.log('GLOBAL VARIABLES =============== \N');
-    console.log('globalUser', globalUser);
-    console.log('globalToken', globalToken);
-    console.log('globalURL', globalURL);
-    console.log('globalRepoLocal', globalRepoLocal);
+function githubPR() {
     var header = {
-        Authorization: 'token ' + user.accessToken,
-        "User-Agent": "rdotchin",
+        Authorization: 'token ' + GlobalToken,
+        "User-Agent": GlobalUser.username,
         "scopes": "repo"
     };
     var body = {
-        "title": "TidyGit Complete",
+        "title": "TidyGit",
         "body": "TidyGit has cleaned up all the JavaScript files",
         "head": "TidyGit",
         "base": "master"
     };
-    var url = "https://api.github.com/repos/rdotchin/testfile/pulls";
+    var url = "https://api.github.com/repos/" + GlobalUser.username + "/" + GlobalRepoName + "/pulls";
     var options = {
         method: 'post',
         headers: header,
@@ -217,11 +216,15 @@ function githubPR(repoName, user) {
         }
         /*console.log('headers', res.headers);*/
         console.log('statusCode', res.statusCode);
+        deleteRepo();
        /* console.log('body', body);*/
     })
 }
 
-// function to delete repo dir
-function deleteRepo(repoName) {
-
+// Delete repo directory once TidyGit has finished
+function deleteRepo() {
+    rimraf(GlobalRepoLocal, function(err) {
+        if (err) throw err;
+        console.log('successfully deleted ' + GlobalRepoLocal);
+    });
 }
