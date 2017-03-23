@@ -7,6 +7,8 @@ function HomeCtrl(user, $http){
 	const vm = this;
     vm.repoArr = [];
     vm.user = [];
+    vm.modal = ""; //variable to control if the modal is open or not (Bulma does not provide one)
+
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
     Pusher.logToConsole = true;
@@ -23,9 +25,12 @@ function HomeCtrl(user, $http){
 		else{
     		console.log("fail")
     	}
-    	alert(typeof data.message);
     });
 
+	//function to close the modal
+    vm.closeModal = function(){
+    	vm.modal = "b";
+	};
 
 
 	/* Get request to retrieve the users information.  Need the username to pull
@@ -34,7 +39,7 @@ function HomeCtrl(user, $http){
         .then(function(resp){
             console.log(resp.data);
 			var username = resp.data.username;
-
+			vm.user = resp.data;
 			console.log(vm.user);
 			/*getRepo(resp.data.username);*/
         });
@@ -59,7 +64,8 @@ function HomeCtrl(user, $http){
 	   download the repo, parse the directory for .js files, beautify the files (and eventually
 	   send a pull request for the user*/
 	  vm.cleanRepo = function(repoUrl, repoName) {
-	      alert("cleaning");
+
+	      vm.active = "is-active"; //Open the modal with spinning gif
      	$http.post('/clean/repo', {
      		repoUrl: repoUrl,
 			repoName: repoName})

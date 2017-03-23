@@ -46,11 +46,8 @@ passport.use(new GitHubStrategy({
     	where: {
     		githubId: profile.id
     	}}).then(function(user) {
-               /* console.log('USER', user);*/
+
     	        if(user){
-    	            console.log('if user', user);
-                    //update
-                    console.log('update token', accessToken);
                     //UPDATE USER
                      db.Users.update({
                         accessToken: accessToken
