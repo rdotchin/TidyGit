@@ -15,3 +15,11 @@
 #search {
     margin-top: 14px;
 }
+
+i {
+    color: black;
+}
+
+i:hover {
+    color: #72d0eb;
+}

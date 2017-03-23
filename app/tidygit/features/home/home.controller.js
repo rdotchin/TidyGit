@@ -7,7 +7,7 @@ function HomeCtrl(user, $http){
 	const vm = this;
     vm.repoArr = [];
     vm.user = [];
-    vm.modal = ""; //variable to control if the modal is open or not (Bulma does not provide one)
+    vm.modal; //variable to control if the modal is open or not (Bulma does not provide one)
 
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
@@ -29,7 +29,7 @@ function HomeCtrl(user, $http){
 
 	//function to close the modal
     vm.closeModal = function(){
-    	vm.modal = "b";
+    	vm.modal = "cancel";
 	};
 
 
@@ -64,9 +64,10 @@ function HomeCtrl(user, $http){
 	   download the repo, parse the directory for .js files, beautify the files (and eventually
 	   send a pull request for the user*/
 	  vm.cleanRepo = function(repoUrl, repoName) {
+          //Open the modal with spinning gif
+	      vm.modal = "is-active";
 
-	      vm.active = "is-active"; //Open the modal with spinning gif
-     	$http.post('/clean/repo', {
+	      $http.post('/clean/repo', {
      		repoUrl: repoUrl,
 			repoName: repoName})
 			.then(function(resp){
