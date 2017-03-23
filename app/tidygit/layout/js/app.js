@@ -199,7 +199,7 @@ function githubPR() {
     };
     var body = {
         "title": "TidyGit",
-        "body": "TidyGit has cleaned up all the JavaScript files",
+        "body": "![](https://media.giphy.com/media/gBOmoFv3SAlLG/giphy.gif)",
         "head": "TidyGit",
         "base": "master"
     };
@@ -217,9 +217,18 @@ function githubPR() {
             console.log(err);
             throw err
         }
-        pusher.trigger('my-channel', 'my-event', {
-            "message": res.statusCode
-        });
+        //PUSHER
+        if(res.statusCode === 201) {
+            pusher.trigger('my-channel', 'tidy-success', {
+                /*if(res.statusCode == )*/
+                "message": res
+            });
+        } else{
+            pusher.trigger('my-channel', 'tidy-fail', {
+                /*if(res.statusCode == )*/
+                "message": res
+            });
+        }
         /*console.log('headers', res.headers);*/
         console.log('statusCode', res.statusCode);
         deleteRepo();

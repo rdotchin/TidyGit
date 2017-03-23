@@ -56,23 +56,3 @@
 
         </table>
 
-        <!--RESULTS MODAL: Bulma model will show with class modal is-active.  Variable set to an empty string
-        when the tidy button of a repo is clicked the modal will show, the buttons in the modal contain
-        the function to close the modal-->
-        <div class="modal {{HomeVM.modal}}">
-            <div class="modal-background"></div>
-            <div class="modal-card">
-                <header class="modal-card-head">
-                    <p class="modal-card-title">Modal title</p>
-                    <button class="delete" ng-click="HomeVM.closeModal()"></button>
-                </header>
-                <section class="modal-card-body">
-                    <div class="is-loading"></div>
-                </section>
-                <footer class="modal-card-foot">
-                    <a class="button is-success" href="{{HomeVM.user.profileUrl}}" ng-click="HomeVM.closeModal() target="_blank"><i class="fa fa-github-square fa-2x"></i></a>
-                    <button class="button" ng-click="HomeVM.closeModal()">Cancel</button>
-                </footer>
-            </div>
-        </div>
-</div>

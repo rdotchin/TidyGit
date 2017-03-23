@@ -7,7 +7,7 @@ function HomeCtrl(user, $http){
 	const vm = this;
     vm.repoArr = [];
     vm.user = [];
-    vm.modal; //variable to control if the modal is open or not (Bulma does not provide one)
+
 
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
@@ -18,13 +18,14 @@ function HomeCtrl(user, $http){
     });
 
     var channel = pusher.subscribe('my-channel');
-    channel.bind('my-event', function(data) {
-    	if(data.message === 201){
-    		console.log("success")
-		}
-		else{
-    		console.log("fail")
-    	}
+    channel.bind('tidy-success', function(data) {
+    	//update button to success and append github icon
+        console.log('tidy', data);
+    });
+
+    channel.bind('tidy-fail', function(data){
+        // update button state to red
+        // show why failure
     });
 
 	//function to close the modal
@@ -65,7 +66,6 @@ function HomeCtrl(user, $http){
 	   send a pull request for the user*/
 	  vm.cleanRepo = function(repoUrl, repoName) {
           //Open the modal with spinning gif
-	      vm.modal = "is-active";
 
 	      $http.post('/clean/repo', {
      		repoUrl: repoUrl,
