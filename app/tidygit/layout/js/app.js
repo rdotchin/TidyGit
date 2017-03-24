@@ -6,6 +6,15 @@ const beautify = require('js-beautify').js_beautify;
 const moment = require('moment');
 var simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
+const Pusher = require('pusher');
+
+var pusher = new Pusher({
+    appId: '317526',
+    key: 'cdd662307ca417771c70',
+    secret: 'd571a85c4f5529524913'
+});
+
+
 
 //GLOBAL VARIABLES
 var GlobalUser;
@@ -33,6 +42,7 @@ module.exports = {
 
     /*CLONE THE GITHUB REPO */
     cloneRepo : function(repoURL, repoName, user) {
+        console.log('cloneRepo');
         //set global variables
         GlobalUser = user;
         GlobalToken = user.accessToken;
@@ -189,7 +199,7 @@ function githubPR() {
     };
     var body = {
         "title": "TidyGit",
-        "body": "TidyGit has cleaned up all the JavaScript files",
+        "body": "![](https://media.giphy.com/media/gBOmoFv3SAlLG/giphy.gif)",
         "head": "TidyGit",
         "base": "master"
     };
@@ -203,11 +213,25 @@ function githubPR() {
     };
 
     request.post(options, function(err, res, body){
-        if (err) {
-            console.log(err);
-            throw err
+        if (err){
+            throw err;
         }
-        /*console.log('headers', res.headers);*/
+
+        //PUSHER
+         //if successful
+        if(res.statusCode < 300) {
+            //respond back to pusher with success
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-success', {
+                "message": res.statusCode
+            });
+        }
+        else {
+            //else respond back to pusher with fail
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-fail', {
+                "message": res.statusCode
+            });
+        }
+
         console.log('statusCode', res.statusCode);
         deleteRepo();
        /* console.log('body', body);*/

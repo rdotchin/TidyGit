@@ -1,3 +1,32 @@
+
 #loginButton {
-    justify-content: end;
+    margin-top: 10px;
+}
+
+#loginOcto {
+    color: white;
+    margin-right: 8px
+}
+
+
+#logo {
+    height: 80px;
+    width: 142px;
+}
+
+#userPicture {
+    height: 80px;
+    width: 80px;
+}
+
+#search {
+    margin-top: 14px;
+}
+
+i {
+    color: black;
+}
+
+i:hover {
+    color: #72d0eb;
 }

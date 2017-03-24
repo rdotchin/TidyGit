@@ -1,8 +1,8 @@
 angular
     .module('tidygit.component.nav')
-    .directive('nav', Nav);
+    .directive('navigation', Navigation);
 
-function Nav() {
+function Navigation() {
     return {
         restrict: 'E', //Directive will be an element <tabs></tabs>
         scope: {

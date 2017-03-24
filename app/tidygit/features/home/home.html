@@ -1,11 +1,16 @@
-<div ng-controller="HomeCtrl">
+<div>
     <nav class="nav has-shadow">
         <div class="container">
             <div class="nav-left">
-                <a class="nav-item">
-                    hello
-                    <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma logo">
-                </a>
+                    <img class="nav-item" id="logo" src="tidygit/layout/images/tidygitLogo.png" alt="TidyGitLogo">
+                    <div class="field nav-item">
+                        <p class="control" id="search">
+                            <input class="input" ng-model="search" type="text" placeholder="Search">
+                        </p>
+                    </div>
+            </div>
+            <div class="nav-right">
+                <img class="nav-item" id="userPicture" src="{{HomeVM.user.photo}}" alt="User Photo">
             </div>
         </div>
     </nav>
@@ -25,7 +30,7 @@
                 </tr>
             </thead>
             <tr class="list"
-                ng-repeat="repo in HomeVM.repoArr"
+                ng-repeat="repo in HomeVM.repoArr | filter: search"
                 aria-label="repo">
                 <td><a href="{{repo.html_url}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
                 <td>{{repo.html_url}}</td>
@@ -43,12 +48,13 @@
                     </div>
                 </td>
 
-                <td><button class="button is-success is-outlined"
-                            ng-click="HomeVM.cleanRepo(repo.html_url, repo.name)">
+                <td>
+                    <button class="button is-info"
+                            ng-click="HomeVM.cleanRepo(repo)"
+                            ng-class="{'is-loading': repo.status === 'pending', 'is-success': repo.status === 'success', 'is-danger': repo.status === 'fail'}">
                     Start</button>
                 </td>
             </tr>
 
         </table>
-    </div>
-</div>
+
