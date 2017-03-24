@@ -48,8 +48,9 @@
                     </div>
                 </td>
 
-                <td><button class="button is-success is-outlined"
-                            ng-click="HomeVM.cleanRepo(repo.html_url, repo.name)">
+                <td><button class="button is-info"
+                            ng-click="HomeVM.cleanRepo(repo.html_url, repo.name, $index)"
+                            ng-class="{true: HomeVM.buttonState}[HomeVM.activeBtn == $index]">
                     Start</button>
                 </td>
             </tr>

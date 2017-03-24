@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0d9de9d3-33dd-438b-a2a9-1db9569bbe9e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/tidygit/features/login/login.html" afterPath="$PROJECT_DIR$/app/tidygit/features/login/login.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/tidygit/layout/css/style.css" afterPath="$PROJECT_DIR$/app/tidygit/layout/css/style.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/tidygit/features/home/home.controller.js" afterPath="$PROJECT_DIR$/app/tidygit/features/home/home.controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/tidygit/features/home/home.html" afterPath="$PROJECT_DIR$/app/tidygit/features/home/home.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,11 +32,11 @@
     <splitter split-orientation="horizontal" split-proportion="0.44892168">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
+          <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/tidygit/layout/css/style.css">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="196">
-                  <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+                <state relative-caret-position="448">
+                  <caret line="16" column="14" lean-forward="true" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
                   <folding />
                 </state>
               </provider>
@@ -52,6 +52,16 @@
               </provider>
             </entry>
           </file>
+          <file leaf-file-name="home.controller.js" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/app/tidygit/features/home/home.controller.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="336">
+                  <caret line="28" column="38" lean-forward="false" selection-start-line="28" selection-start-column="38" selection-end-line="28" selection-end-column="38" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
         </leaf>
       </split-first>
       <split-second>
@@ -59,8 +69,8 @@
           <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/tidygit/layout/js/app.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="6440">
-                  <caret line="230" column="9" lean-forward="true" selection-start-line="230" selection-start-column="9" selection-end-line="230" selection-end-column="9" />
+                <state relative-caret-position="4092">
+                  <caret line="228" column="30" lean-forward="false" selection-start-line="228" selection-start-column="30" selection-end-line="228" selection-end-column="30" />
                   <folding />
                 </state>
               </provider>
@@ -69,10 +79,10 @@
           <file leaf-file-name="home.html" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/tidygit/features/home/home.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="308">
-                  <caret line="11" column="24" lean-forward="false" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
+                <state relative-caret-position="509">
+                  <caret line="55" column="17" lean-forward="true" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
                   <folding>
-                    <marker date="1490252982000" expanded="true" signature="1923:2034" ph="..." />
+                    <marker date="1490374981000" expanded="true" signature="1908:2121" ph="..." />
                   </folding>
                 </state>
               </provider>
@@ -153,11 +163,11 @@
         <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/app/tidygit/features/components/nav/nav.directive.js" />
         <option value="$PROJECT_DIR$/app/index.html" />
-        <option value="$PROJECT_DIR$/app/tidygit/features/home/home.controller.js" />
         <option value="$PROJECT_DIR$/app/tidygit/layout/js/app.js" />
-        <option value="$PROJECT_DIR$/app/tidygit/features/home/home.html" />
         <option value="$PROJECT_DIR$/app/tidygit/features/login/login.html" />
         <option value="$PROJECT_DIR$/app/tidygit/layout/css/style.css" />
+        <option value="$PROJECT_DIR$/app/tidygit/features/home/home.html" />
+        <option value="$PROJECT_DIR$/app/tidygit/features/home/home.controller.js" />
       </list>
     </option>
   </component>
@@ -172,7 +182,7 @@
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="406" />
+    <option name="x" value="-16" />
     <option name="y" value="22" />
     <option name="width" value="2048" />
     <option name="height" value="1097" />
@@ -328,10 +338,6 @@
               <option name="myItemId" value="features" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="login" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -352,6 +358,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="features" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="home" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -439,6 +449,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="0d9de9d3-33dd-438b-a2a9-1db9569bbe9e" name="Default" comment="" />
@@ -462,12 +475,12 @@
       <workItem from="1490151999527" duration="3634000" />
       <workItem from="1490211523033" duration="17953000" />
       <workItem from="1490252952543" duration="2193000" />
-      <workItem from="1490368399694" duration="1711000" />
+      <workItem from="1490368399694" duration="5648000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="99569000" />
+    <option name="totallyTimeSpent" value="103506000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -479,8 +492,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="406" y="22" width="2048" height="1097" extended-state="0" />
-    <editor active="true" />
+    <frame x="-16" y="22" width="2048" height="1097" extended-state="0" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1226321" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -488,7 +501,7 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3289183" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18867925" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18867925" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -638,6 +651,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="202">
           <caret line="46" column="96" lean-forward="false" selection-start-line="46" selection-start-column="95" selection-end-line="46" selection-end-column="96" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -677,22 +691,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/tidygit/features/home/home.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="22" column="34" lean-forward="false" selection-start-line="22" selection-start-column="34" selection-end-line="22" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/tidygit/layout/js/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6440">
-          <caret line="230" column="9" lean-forward="true" selection-start-line="230" selection-start-column="9" selection-end-line="230" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="733">
@@ -709,16 +707,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/tidygit/features/home/home.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="11" column="24" lean-forward="false" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
-          <folding>
-            <marker date="1490252982000" expanded="true" signature="1923:2034" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/tidygit/features/login/login.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="336">
@@ -729,9 +717,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/tidygit/layout/css/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+        <state relative-caret-position="448">
+          <caret line="16" column="14" lean-forward="true" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/tidygit/layout/js/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4092">
+          <caret line="228" column="30" lean-forward="false" selection-start-line="228" selection-start-column="30" selection-end-line="228" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/tidygit/features/home/home.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="28" column="38" lean-forward="false" selection-start-line="28" selection-start-column="38" selection-end-line="28" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/tidygit/features/home/home.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="509">
+          <caret line="55" column="17" lean-forward="true" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
+          <folding>
+            <marker date="1490374981000" expanded="true" signature="1908:2121" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>

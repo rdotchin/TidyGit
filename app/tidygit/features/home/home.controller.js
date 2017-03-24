@@ -7,7 +7,13 @@ function HomeCtrl(user, $http){
 	const vm = this;
     vm.repoArr = [];
     vm.user = [];
+    vm.buttonState = '';
 
+    /*===================BUTTONS====================================*/
+    vm.selectButton = function(index){
+        alert("clicked");
+
+    };
 
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
@@ -20,6 +26,7 @@ function HomeCtrl(user, $http){
     var channel = pusher.subscribe('my-channel');
     channel.bind('tidy-success', function(data) {
     	//update button to success and append github icon
+        vm.buttonState = 'is-success';
         console.log('tidy', data);
     });
 
@@ -64,9 +71,10 @@ function HomeCtrl(user, $http){
 	   We will send the first repo responses URL and Name.  The app on the server side will
 	   download the repo, parse the directory for .js files, beautify the files (and eventually
 	   send a pull request for the user*/
-	  vm.cleanRepo = function(repoUrl, repoName) {
+	  vm.cleanRepo = function(repoUrl, repoName, index) {
           //Open the modal with spinning gif
-
+          vm.activeBtn = index; // sets ng-class to true;
+          vm.buttonState = 'is-loading';
 	      $http.post('/clean/repo', {
      		repoUrl: repoUrl,
 			repoName: repoName})
