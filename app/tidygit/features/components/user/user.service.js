@@ -3,7 +3,7 @@ angular
     .service('user', UserService);
 
 
-function UserService($http){
+function UserService($http) {
 
 
 
