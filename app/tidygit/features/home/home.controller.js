@@ -74,11 +74,9 @@ function HomeCtrl(user, $http, $timeout){
         var channel = pusher.subscribe(channelName);
         //pusher channel if success
         channel.bind('tidy-success', function(data) {
-            console.log('tidy-success', data);
             //button will turn green
             $timeout(function() {
                 repo.status = 'success';
-                console.log(repo.status);
             });
             //go back to blue in 8 seconds
             $timeout(function() {
@@ -89,7 +87,6 @@ function HomeCtrl(user, $http, $timeout){
         });
         //pusher channel if fail
         channel.bind('tidy-fail', function(data){
-            console.log('tidy-fail', data);
             //button will turn red
             $timeout(function() {
                 repo.status = 'fail';

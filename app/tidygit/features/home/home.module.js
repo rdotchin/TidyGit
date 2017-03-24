@@ -1,6 +1,5 @@
 angular
 	.module('tidygit.home', [
-        'tidygit.component.user',
-        'tidygit.component.nav'
+        'tidygit.component.user'
 	]);
 	

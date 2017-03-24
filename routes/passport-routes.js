@@ -20,6 +20,7 @@ module.exports = function(app){
       login page CHANGE THE '/' WHEN CHANGING THE LOGIN URL!!!!!!!!!!*/
 	app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/' }),
   		function(req, res) {
+	    console.log(req);
     		// Successful authentication, redirect home.
     		res.redirect("/#!/home");
   			});
