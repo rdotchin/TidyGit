@@ -213,26 +213,25 @@ function githubPR() {
     };
 
     request.post(options, function(err, res, body){
-        /*if (err) {
-         console.log(err);
-         throw err
-         }*/
+        if (err){
+            throw err;
+        }
+
         //PUSHER
-            console.log(res);
+         //if successful
         if(res.statusCode < 300) {
-            console.log('here');
-            console.log(GlobalUser.username + '-' + GlobalRepoName);
+            //respond back to pusher with success
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-success', {
                 "message": res.statusCode
             });
         }
         else {
+            //else respond back to pusher with fail
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-fail', {
                 "message": res.statusCode
             });
         }
 
-        /*console.log('headers', res.headers);*/
         console.log('statusCode', res.statusCode);
         deleteRepo();
        /* console.log('body', body);*/

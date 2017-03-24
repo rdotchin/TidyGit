@@ -53,36 +53,8 @@ function HomeCtrl(user, $http, $timeout){
                     repoName: repoName
                 })
                 .then(function (resp) {
-                    //create pusher channel
-                    var channel = pusher.subscribe(channelName);
-                    //pusher channel if success
-                    channel.bind('tidy-success', function(data) {
-                        console.log('tidy-success', data);
-                        //button will turn green
-                        $timeout(function() {
-                            repo.status = 'success';
-                        });
-                        //go back to blue in 8 seconds
-                        $timeout(function() {
-                            repo.status = null;
-                        }, 8000);
-                        //unsubscribe from pusher channel
-                        pusher.unsubscribe(channelName);
-                    });
-                    //pusher channel if fail
-                    channel.bind('tidy-fail', function(data){
-                        console.log('tidy-fail', data);
-                        //button will turn red
-                        $timeout(function() {
-                            repo.status = 'fail';
-                        });
-                        //go back to blue in 8 seconds
-                        $timeout(function() {
-                            repo.status = null;
-                        }, 8000);
-                        //unsubscribe from pusher channel
-                        pusher.unsubscribe(channelName);
-                    });
+
+                    buttonResp(repo, resp);
                 })
                 .catch(function(error) {
                     //if error button will turn red
@@ -92,5 +64,42 @@ function HomeCtrl(user, $http, $timeout){
                         repo.status = null;
                     }, 8000);
                 });
-        }
+        };
+
+     /*use the response back from pusher to change the submit button to either
+      green(success) or red(fail)*/
+    function buttonResp(repo, resp){
+        var channelName = repo.owner.login + '-' + repo.name;
+        //create pusher channel
+        var channel = pusher.subscribe(channelName);
+        //pusher channel if success
+        channel.bind('tidy-success', function(data) {
+            console.log('tidy-success', data);
+            //button will turn green
+            $timeout(function() {
+                repo.status = 'success';
+                console.log(repo.status);
+            });
+            //go back to blue in 8 seconds
+            $timeout(function() {
+                repo.status = null;
+            }, 8000);
+            //unsubscribe from pusher channel
+            pusher.unsubscribe(channelName);
+        });
+        //pusher channel if fail
+        channel.bind('tidy-fail', function(data){
+            console.log('tidy-fail', data);
+            //button will turn red
+            $timeout(function() {
+                repo.status = 'fail';
+            });
+            //go back to blue in 8 seconds
+            $timeout(function() {
+                repo.status = null;
+            }, 8000);
+            //unsubscribe from pusher channel
+            pusher.unsubscribe(channelName);
+        });
+    }
 }
