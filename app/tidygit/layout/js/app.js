@@ -121,7 +121,7 @@ function tidyNextFile() {
     }
     //read the .js file and write it using js-beautify, then run the tidy function again
     fs.readFile(file, 'utf8', function (err, data) {
-        fs.writeFile(file, beautify(data, {indent_size: 6}), function() {
+        fs.writeFile(file, beautify(data, {indent_size: 4}), function() {
             console.log('successful write');
             tidyNextFile();
         })
