@@ -11,8 +11,7 @@ const Pusher = require('pusher');
 var pusher = new Pusher({
     appId: '317526',
     key: 'cdd662307ca417771c70',
-    secret: 'd571a85c4f5529524913',
-    encrypted: true
+    secret: 'd571a85c4f5529524913'
 });
 
 
@@ -43,6 +42,7 @@ module.exports = {
 
     /*CLONE THE GITHUB REPO */
     cloneRepo : function(repoURL, repoName, user) {
+        console.log('cloneRepo');
         //set global variables
         GlobalUser = user;
         GlobalToken = user.accessToken;
@@ -213,22 +213,25 @@ function githubPR() {
     };
 
     request.post(options, function(err, res, body){
-        if (err) {
-            console.log(err);
-            throw err
-        }
+        /*if (err) {
+         console.log(err);
+         throw err
+         }*/
         //PUSHER
-        if(res.statusCode === 201) {
-            pusher.trigger('my-channel', 'tidy-success', {
-                /*if(res.statusCode == )*/
-                "message": res
-            });
-        } else{
-            pusher.trigger('my-channel', 'tidy-fail', {
-                /*if(res.statusCode == )*/
-                "message": res
+            console.log(res);
+        if(res.statusCode < 300) {
+            console.log('here');
+            console.log(GlobalUser.username + '-' + GlobalRepoName);
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-success', {
+                "message": res.statusCode
             });
         }
+        else {
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-fail', {
+                "message": res.statusCode
+            });
+        }
+
         /*console.log('headers', res.headers);*/
         console.log('statusCode', res.statusCode);
         deleteRepo();

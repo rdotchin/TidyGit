@@ -3,17 +3,10 @@ angular
 	.controller('HomeCtrl', HomeCtrl);
 
 
-function HomeCtrl(user, $http){
+function HomeCtrl(user, $http, $timeout){
 	const vm = this;
     vm.repoArr = [];
     vm.user = [];
-    vm.buttonState = '';
-
-    /*===================BUTTONS====================================*/
-    vm.selectButton = function(index){
-        alert("clicked");
-
-    };
 
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
@@ -22,23 +15,6 @@ function HomeCtrl(user, $http){
     var pusher = new Pusher('cdd662307ca417771c70', {
         encrypted: true
     });
-
-    var channel = pusher.subscribe('my-channel');
-    channel.bind('tidy-success', function(data) {
-    	//update button to success and append github icon
-        vm.buttonState = 'is-success';
-        console.log('tidy', data);
-    });
-
-    channel.bind('tidy-fail', function(data){
-        // update button state to red
-        // show why failure
-    });
-
-	//function to close the modal
-    vm.closeModal = function(){
-    	vm.modal = "cancel";
-	};
 
 
 	/* Get request to retrieve the users information.  Need the username to pull
@@ -62,26 +38,59 @@ function HomeCtrl(user, $http){
 
         });
 
-    /*After getting the user data this function will be invoked to retrieve all of
-      the users GitHub repos and put the url and name of each repo into an array to
-      be displayed on the page for the user to select*/
-
-
 	 /* After receiving the users github repos (the user will eventually select but for now)
 	   We will send the first repo responses URL and Name.  The app on the server side will
 	   download the repo, parse the directory for .js files, beautify the files (and eventually
 	   send a pull request for the user*/
-	  vm.cleanRepo = function(repoUrl, repoName, index) {
-          //Open the modal with spinning gif
-          vm.activeBtn = index; // sets ng-class to true;
-          vm.buttonState = 'is-loading';
-	      $http.post('/clean/repo', {
-     		repoUrl: repoUrl,
-			repoName: repoName})
-			.then(function(resp){
-     		//if clean
-			console.log(resp);
-		 })
-	 }
+        vm.cleanRepo = function (repo) {
+            repo.status = 'pending';
 
+            var repoName = repo.name;
+            var channelName = repo.owner.login + '-' + repoName;
+
+            console.log(channelName);
+            $http.post('/clean/repo', {
+                    repoName: repoName
+                })
+                .then(function (resp) {
+                    //create pusher channel
+                    var channel = pusher.subscribe(channelName);
+                    //pusher channel if success
+                    channel.bind('tidy-success', function(data) {
+                        console.log('tidy-success', data);
+                        //button will turn green
+                        $timeout(function() {
+                            repo.status = 'success';
+                        });
+                        //go back to blue in 8 seconds
+                        $timeout(function() {
+                            repo.status = null;
+                        }, 8000);
+                        //unsubscribe from pusher channel
+                        pusher.unsubscribe(channelName);
+                    });
+                    //pusher channel if fail
+                    channel.bind('tidy-fail', function(data){
+                        console.log('tidy-fail', data);
+                        //button will turn red
+                        $timeout(function() {
+                            repo.status = 'fail';
+                        });
+                        //go back to blue in 8 seconds
+                        $timeout(function() {
+                            repo.status = null;
+                        }, 8000);
+                        //unsubscribe from pusher channel
+                        pusher.unsubscribe(channelName);
+                    });
+                })
+                .catch(function(error) {
+                    //if error button will turn red
+                    repo.status = 'fail';
+
+                    $timeout(function() {
+                        repo.status = null;
+                    }, 8000);
+                });
+        }
 }
