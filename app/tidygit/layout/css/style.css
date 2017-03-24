@@ -1,6 +1,13 @@
+
 #loginButton {
-    justify-content: end;
+    margin-top: 10px;
 }
+
+#loginOcto {
+    color: white;
+    margin-right: 8px
+}
+
 
 #logo {
     height: 80px;
