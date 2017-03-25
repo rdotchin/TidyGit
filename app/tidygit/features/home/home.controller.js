@@ -5,8 +5,8 @@ angular
 
 function HomeCtrl(user, $http, $timeout) {
     const vm = this;
-    vm.repoArr = [];
-    vm.user = [];
+    vm.repoArr = []; //Array to hold the users repos
+    vm.user = []; //Array to hold the user data
 
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
@@ -21,11 +21,7 @@ function HomeCtrl(user, $http, $timeout) {
     their github repos*/
     $http.get('/user')
         .then(function(resp) {
-            console.log(resp.data);
-            var username = resp.data.username;
             vm.user = resp.data;
-            console.log(vm.user);
-            /*getRepo(resp.data.username);*/
         });
 
     $http.get('/repos')

@@ -29,7 +29,7 @@ passport.deserializeUser(function(obj, done) {
 
 
 //requiring our models for syncing
-const db = require("./models");
+const db = require("./api/models");
 
 // Passport Github
 passport.use(new GitHubStrategy({
@@ -119,7 +119,7 @@ app.use(bodyParser.json({
 app.use(methodOverride('X-HTTP-Method-Override'));
 
 //require passport and GitHub api routesroutes
-require('./routes/passport-routes.js')(app);
+require('./api/routes/passport-routes.js')(app);
 
 
 

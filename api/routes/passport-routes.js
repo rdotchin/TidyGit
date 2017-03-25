@@ -1,5 +1,5 @@
 const passport = require('passport');
-const tidyGit = require('../app/tidygit/layout/js/app.js');
+const tidyGit = require('../../app/tidygit/layout/js/app.js');
 
 module.exports = function(app) {
 
@@ -39,7 +39,7 @@ module.exports = function(app) {
                 'User-Agent': 'rdotchin'
             }
         };
-        // invoke function from app.js
+        // invoke function to get repos from github api in app.js
         tidyGit.reposList(req.user.username, req.user.accessToken, function(repos) {
             res.send(repos);
         });
@@ -58,12 +58,9 @@ module.exports = function(app) {
         var repoName = req.body.repoName;
         const user = req.user;
         var repoURL = 'https://' + user.accessToken + ':x-oauth-basic@github.com/' + user.username + '/' + repoName + '.git';
-
+        //call the TidyGit function in app.js passing in the users info, repo name and repo url
         tidyGit.cloneRepo(repoURL, repoName, user); // call function in app.js to run tidyGit
-        /*tidyGit.cloneRepo(repoURL, repoName, user, function(stausNumber){
-            res.sendstatus(statusNumber);
-            in angular....if(201) send success, else something went wrong
-        }*/
+
         res.sendStatus(200);
     });
 
