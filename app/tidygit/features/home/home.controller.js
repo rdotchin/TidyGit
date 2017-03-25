@@ -16,7 +16,6 @@ function HomeCtrl(user, $http, $timeout) {
         encrypted: true
     });
 
-
     /* Get request to retrieve the users information.  Need the username to pull
     their github repos*/
     $http.get('/user')
@@ -26,30 +25,24 @@ function HomeCtrl(user, $http, $timeout) {
 
     $http.get('/repos')
         .then(function(resp) {
-            console.log(resp.data);
+            //Parse response data and push the data for each Github repo to the repoArr
             resp.data.forEach(function(data, indx) {
                 vm.repoArr.push(data);
             });
-            console.log(vm.repoArr);
-
         });
 
-    /* After receiving the users github repos (the user will eventually select but for now)
-      We will send the first repo responses URL and Name.  The app on the server side will
-      download the repo, parse the directory for .js files, beautify the files (and eventually
-      send a pull request for the user*/
+    /* Make a post to the server sending the repo name to run through TidyGit process.  During this
+       process the button will spin then either turn green(success) or red(fail*/
     vm.cleanRepo = function(repo) {
-        repo.status = 'pending';
-
+        repo.status = 'pending'; //Change button to spinning
         var repoName = repo.name;
         var channelName = repo.owner.login + '-' + repoName;
-
-        console.log(channelName);
+        //Post to send repo name to begin tidy process
         $http.post('/clean/repo', {
                 repoName: repoName
             })
             .then(function(resp) {
-
+                //function to change button to green or red
                 buttonResp(repo, resp);
             })
             .catch(function(error) {
