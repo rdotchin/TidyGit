@@ -39,27 +39,29 @@ passport.use(new GitHubStrategy({
         db.Users.findOne({
             where: {
                 githubId: profile.id
-            }}).then(function(user) {
+            }
+        }).then(function(user) {
 
-            if(user){
+            if (user) {
                 //UPDATE USER
                 db.Users.update({
                     accessToken: accessToken
                 }, {
-                    where: {githubId: user.githubId}
-                }).then(function(data){
+                    where: {
+                        githubId: user.githubId
+                    }
+                }).then(function(data) {
                     // FIND UPDATED USER AND RETURN IT TO PASSPORT
                     db.Users.findOne({
                         where: {
                             githubId: profile.id
                         }
-                    }).then(function(updatedUser){
+                    }).then(function(updatedUser) {
                         /*console.log("updated user", updatedUser);*/
                         return done(null, updatedUser);
                     });
                 })
-            }
-            else{
+            } else {
                 //IF NO USER, CREATE ONE
                 db.Users.create({
                     name: user.name,
@@ -69,13 +71,13 @@ passport.use(new GitHubStrategy({
                     profileUrl: user.profileUrl,
                     email: user.email,
                     photo: user.photo
-                }).then(function(data){
+                }).then(function(data) {
                     // FIND CREATED USER AND SEND TO PASSPORT
                     db.Users.findOne({
                         where: {
                             githubId: profile.id
                         }
-                    }).then(function(updatedUser){
+                    }).then(function(updatedUser) {
                         /*console.log("updated user", updatedUser);*/
                         return done(null, updatedUser);
                     });
