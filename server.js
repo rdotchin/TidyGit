@@ -30,16 +30,13 @@ passport.use(new GitHubStrategy({
         callbackURL: "http://127.0.0.1:8080/auth/github/callback"
     },
     function(accessToken, refreshToken, profile, done) {
-        console.log('accessToken', accessToken);
-        /*if no user in db one will be created.  If there is a user it
-         will update the accessToken, find the updated user and return it*/
+        //Find user by github id
         db.Users.findOne({
             where: {
                 githubId: profile.id
             }
         }).then(function (user) {
-
-            console.log('findone', user);
+            //if there is no user create one
             if(user == null){
                 //IF NO USER, CREATE ONE
                 db.Users.create({
@@ -56,7 +53,7 @@ passport.use(new GitHubStrategy({
                 })
             }
             else {
-                //UPDATE USER
+                //if there is a user update their OAuth token
                 db.Users.update({
                     accessToken: accessToken
                 }, {
@@ -78,7 +75,7 @@ passport.use(new GitHubStrategy({
         });
     }
 
-        ));
+));
 
 
 /*================================PASSPORT GITHUB END=================================================*/
