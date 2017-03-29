@@ -31,7 +31,7 @@ module.exports = function(sequelize, DataTypes) {
         }
 
     },
-        /*{
+        {
         class_methods: {
             associate: function(models) {
                 User.hasMany(models.ReposHistory, {
@@ -39,7 +39,7 @@ module.exports = function(sequelize, DataTypes) {
                 });
             }
         }
-        },*/
+        },
 
         {
         timestamps: false
