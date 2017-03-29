@@ -23,6 +23,7 @@ function HomeCtrl(user, $http, $timeout) {
             vm.user = resp.data;
         });
 
+
     $http.get('/repos')
         .then(function(resp) {
             //Parse response data and push the data for each Github repo to the repoArr

@@ -2,7 +2,8 @@ angular
     .module('tidygit', [
         'ui.router',
         'tidygit.login',
-        'tidygit.home'
+        'tidygit.home',
+        'tidygit.history'
     ])
     .config(tidygitConfig);
 

@@ -68,4 +68,8 @@ module.exports = function(app) {
         res.send(req.user);
     });
 
+    app.get('/history', ensureAuthenticated, function(req, res){
+        res.redirect('/#!/history')
+    })
+
 };
