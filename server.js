@@ -12,8 +12,6 @@ const PORT = process.env.PORT || 8080;
 /*================================PASSPORT GITHUB=================================================*/
 
 passport.serializeUser(function(user, done) {
-    /*  console.log(user);*/
-    console.log('serialize', user);
     done(null, user);
 });
 
@@ -32,60 +30,55 @@ passport.use(new GitHubStrategy({
         callbackURL: "http://127.0.0.1:8080/auth/github/callback"
     },
     function(accessToken, refreshToken, profile, done) {
-        /*console.log('accessToken', accessToken);*/
-
+        console.log('accessToken', accessToken);
         /*if no user in db one will be created.  If there is a user it
          will update the accessToken, find the updated user and return it*/
         db.Users.findOne({
             where: {
                 githubId: profile.id
             }
-        }).then(function(user) {
+        }).then(function (user) {
 
-            if (user) {
+            console.log('findone', user);
+            if(user == null){
+                //IF NO USER, CREATE ONE
+                db.Users.create({
+                    name: profile.displayName,
+                    accessToken: accessToken,
+                    githubId: profile.id,
+                    username: profile.username,
+                    profileUrl: profile.profileUrl,
+                    email: profile.emails[0].value,
+                    photo: profile.photos[0].value
+                }).then(function (data) {
+                    console.log('after create', data);
+                    return done(null, data);
+                })
+            }
+            else {
                 //UPDATE USER
                 db.Users.update({
                     accessToken: accessToken
                 }, {
                     where: {
-                        githubId: user.githubId
+                        githubId: profile.id
                     }
-                }).then(function(data) {
+                }).then(function (data) {
                     // FIND UPDATED USER AND RETURN IT TO PASSPORT
                     db.Users.findOne({
                         where: {
                             githubId: profile.id
                         }
-                    }).then(function(updatedUser) {
-                        /*console.log("updated user", updatedUser);*/
-                        return done(null, updatedUser);
-                    });
-                })
-            } else {
-                //IF NO USER, CREATE ONE
-                db.Users.create({
-                    name: user.name,
-                    accessToken: user.accessToken,
-                    githubId: user.githubId,
-                    username: user.username,
-                    profileUrl: user.profileUrl,
-                    email: user.email,
-                    photo: user.photo
-                }).then(function(data) {
-                    // FIND CREATED USER AND SEND TO PASSPORT
-                    db.Users.findOne({
-                        where: {
-                            githubId: profile.id
-                        }
-                    }).then(function(updatedUser) {
-                        /*console.log("updated user", updatedUser);*/
+                    }).then(function (updatedUser) {
+                        console.log("updated user", updatedUser);
                         return done(null, updatedUser);
                     });
                 })
             }
         });
     }
-));
+
+        ));
 
 
 /*================================PASSPORT GITHUB END=================================================*/
@@ -121,7 +114,7 @@ require('./api/routes/passport-routes.js')(app);
 
 //syncing our sequelize models then starting our express app.  
 //Use force:true after models have been altered or first running the app on a local machine
-db.sequelize.sync({ /*force: true*/ }).then(function() {
+db.sequelize.sync({/*force: true*/}).then(function() {
     app.listen(PORT, function() {
         console.log("listening on http://localhost:" + PORT);
     });

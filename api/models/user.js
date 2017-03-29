@@ -30,7 +30,18 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING
         }
 
-    }, {
+    },
+        /*{
+        class_methods: {
+            associate: function(models) {
+                User.hasMany(models.ReposHistory, {
+                    foreignKey: 'id'
+                });
+            }
+        }
+        },*/
+
+        {
         timestamps: false
     });
     return Users;

@@ -26,7 +26,6 @@ module.exports = function(app) {
             failureRedirect: '/'
         }),
         function(req, res) {
-            console.log(req);
             // Successful authentication, redirect home.
             res.redirect("/#!/home");
         });
