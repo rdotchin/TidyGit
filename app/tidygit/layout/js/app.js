@@ -55,57 +55,16 @@ module.exports = {
             console.log('simplegit clone');
             createBranch();
         });
-
-/*
-        var signature = nodegit.Signature.create(GlobalUser.name, GlobalUser.email, moment().unix(), 0);
-
-        nodegit.Clone(GlobalRepoURL, GlobalRepoLocal).then(function(repository) {
-            //OPEN THE REPO AND CREATE A NEW BRANCH CALLED TidyGit
-            nodegit.Repository.open(GlobalRepoLocal)
-                .then(function(repo) {
-                    // Create a new branch on head
-                    return repo.getHeadCommit()
-                        .then(function(commit) {
-                            return repo.createBranch(
-                                "TidyGit",
-                                commit,
-                                0,
-                                repo.defaultSignature(),
-                                "Created new-branch on HEAD");
-                        });
-                }).done(function() {
-                    // once the new branch is created change to that branch
-                    checkoutBranch();
-                });
-        });*/
     }
 };
 
+//create branch called TidyGit and checkout that branch
 function createBranch(){
     simpleGit(GlobalRepoLocal).checkoutLocalBranch('TidyGit', function(response){
         console.log('checked out new branch');
         parseDir()
     })
 }
-/* CHECKOUT THE TIDYGIT BRANCH*/
-/*function checkoutBranch() {
-
-    nodegit.Repository.open(GlobalRepoLocal).then(function(repo) {
-        return repo.getCurrentBranch().then(function(ref) {
-            const checkoutOpts = {
-                checkoutStrategy: nodegit.Checkout.STRATEGY.FORCE
-            };
-            return repo.checkoutBranch("TidyGit", checkoutOpts);
-        }).then(function() {
-            return repo.getCurrentBranch().then(function(ref) {});
-        });
-    }).catch(function(err) {
-        console.log(err);
-    }).done(function() {
-        // Parse the directory
-        parseDir();
-    });
-}*/
 
 /*Find all files in the directory, put the files in an array, only select
   .js files and tidy the js files*/
@@ -146,57 +105,10 @@ function tidyNextFile() {
 /* After the files have run through js-beautify and git add -A this function
    will git commit -m "TidyGit"*/
 function githubCommit() {
-    simpleGit(GlobalRepoLocal).commit('TidyGit', function(){
+    simpleGit(GlobalRepoLocal).commit('TidyGit', function () {
         console.log('git commit');
+        pushBranch();
     });
-
-    /*var _repository;
-    var _index;
-    var _oid;
-    var remote;
-
-    //open a git repo
-    nodegit.Repository.open(GlobalRepoLocal)
-        .then(function(repo) {
-            /!* console.log('commit repo', repo);*!/
-            _repository = repo;
-            return repo.refreshIndex();
-        })
-        .then(function(index) {
-            _index = index;
-        })
-        .then(function() {
-            return _index.write();
-        })
-        .then(function() {
-            return _index.writeTree();
-        })
-        .then(function(oid) {
-            /!*console.log("oid");*!/
-            _oid = oid;
-            return nodegit.Reference.nameToId(_repository, "HEAD");
-        })
-        .then(function(head) {
-            return _repository.getCommit(head);
-        })
-        .then(function(parent) {
-            var author = nodegit.Signature.create(GlobalUser.name,
-                GlobalUser.email, moment().unix(), 0);
-            var committer = nodegit.Signature.create(GlobalUser.name,
-                GlobalUser.email, moment().unix(), 0);
-
-            return _repository.createCommit("HEAD", author, committer,
-                "TidyGit", _oid, [parent]);
-        })
-        .then(function(commitId) {
-            console.log("New Commit:", commitId.allocfmt());
-        })
-        /// PUSH
-        .then(function() {
-            //invoke the git push origin TidyGit function
-            pushBranch()
-        });
-*/
 }
 
 // git push origin TidyGit
