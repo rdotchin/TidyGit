@@ -1,14 +1,13 @@
-const nodegit = require("nodegit");
 const execFile = require('child_process').execFile;
 const request = require('request');
 const fs = require('fs');
 const beautify = require('js-beautify').js_beautify;
 const moment = require('moment');
-var simpleGit = require('simple-git'); // Used for git add -A
+const simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
 const Pusher = require('pusher');
 
-var pusher = new Pusher({
+const pusher = new Pusher({
     appId: '317526',
     key: 'cdd662307ca417771c70',
     secret: 'd571a85c4f5529524913'
@@ -40,7 +39,7 @@ module.exports = {
     },
 
 
-    /*CLONE THE GITHUB REPO */
+    /*CLONE GITHUB REPO */
     cloneRepo: function(repoURL, repoName, user) {
         console.log('cloneRepo');
         //set global variables
@@ -50,48 +49,29 @@ module.exports = {
         GlobalRepoLocal = __dirname + '/' + repoName;
         GlobalRepoName = repoName;
 
-        var signature = nodegit.Signature.create(GlobalUser.name, GlobalUser.email, moment().unix(), 0);
-
-        nodegit.Clone(GlobalRepoURL, GlobalRepoLocal).then(function(repository) {
-            //OPEN THE REPO AND CREATE A NEW BRANCH CALLED TidyGit
-            nodegit.Repository.open(GlobalRepoLocal)
-                .then(function(repo) {
-                    // Create a new branch on head
-                    return repo.getHeadCommit()
-                        .then(function(commit) {
-                            return repo.createBranch(
-                                "TidyGit",
-                                commit,
-                                0,
-                                repo.defaultSignature(),
-                                "Created new-branch on HEAD");
-                        });
-                }).done(function() {
-                    // once the new branch is created change to that branch
-                    checkoutBranch();
-                });
+        //SIMPLEGIT CLONE REPO
+        simpleGit(__dirname + '/').clone(GlobalRepoURL, GlobalRepoLocal, function(results){
+            console.log('simplegit clone');
+            //PUSHER
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'clone', {
+                "message": GlobalRepoName + ' Cloned'
+            });
+            createBranch();
         });
     }
 };
 
-/* CHECKOUT THE TIDYGIT BRANCH*/
-function checkoutBranch() {
-
-    nodegit.Repository.open(GlobalRepoLocal).then(function(repo) {
-        return repo.getCurrentBranch().then(function(ref) {
-            const checkoutOpts = {
-                checkoutStrategy: nodegit.Checkout.STRATEGY.FORCE
-            };
-            return repo.checkoutBranch("TidyGit", checkoutOpts);
-        }).then(function() {
-            return repo.getCurrentBranch().then(function(ref) {});
+//create branch called TidyGit and checkout that branch
+function createBranch(){
+    //SIMPLEGIT CREATE AND CHECKOUT BRANCH
+    simpleGit(GlobalRepoLocal).checkoutLocalBranch('TidyGit', function(response){
+        console.log('checked out new branch');
+        //PUSHER
+        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'branch', {
+            "message": 'TidyGit Branch Created and Checkout'
         });
-    }).catch(function(err) {
-        console.log(err);
-    }).done(function() {
-        // Parse the directory
-        parseDir();
-    });
+        parseDir()
+    })
 }
 
 /*Find all files in the directory, put the files in an array, only select
@@ -99,7 +79,13 @@ function checkoutBranch() {
 var filesToUpdate = [];
 
 function parseDir() {
+
     execFile('find', [GlobalRepoLocal], function(err, stdout, stderr) {
+        //PUSHER
+        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'readFiles', {
+            "message": 'Reading Files'
+        });
+
         filesToUpdate = stdout.split('\n');
         filesToUpdate = filesToUpdate.filter(function(file) {
             return file.includes(".js") && !file.includes("bower")
@@ -115,7 +101,15 @@ function tidyNextFile() {
     var file = filesToUpdate.pop();
     //if no file, git add -A then invoke the git commit function
     if (!file) {
+        //PUSHER
+        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'writeFiles', {
+            "message": 'Files Beautified'
+        });
         return simpleGit(GlobalRepoLocal).raw(['add', '-A'], function() {
+            //PUSHER
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitAdd', {
+                "message": 'git add -A'
+            });
             githubCommit();
         });
     }
@@ -133,60 +127,26 @@ function tidyNextFile() {
 /* After the files have run through js-beautify and git add -A this function
    will git commit -m "TidyGit"*/
 function githubCommit() {
-    var _repository;
-    var _index;
-    var _oid;
-    var remote;
-
-    //open a git repo
-    nodegit.Repository.open(GlobalRepoLocal)
-        .then(function(repo) {
-            /* console.log('commit repo', repo);*/
-            _repository = repo;
-            return repo.refreshIndex();
-        })
-        .then(function(index) {
-            _index = index;
-        })
-        .then(function() {
-            return _index.write();
-        })
-        .then(function() {
-            return _index.writeTree();
-        })
-        .then(function(oid) {
-            /*console.log("oid");*/
-            _oid = oid;
-            return nodegit.Reference.nameToId(_repository, "HEAD");
-        })
-        .then(function(head) {
-            return _repository.getCommit(head);
-        })
-        .then(function(parent) {
-            var author = nodegit.Signature.create(GlobalUser.name,
-                GlobalUser.email, moment().unix(), 0);
-            var committer = nodegit.Signature.create(GlobalUser.name,
-                GlobalUser.email, moment().unix(), 0);
-
-            return _repository.createCommit("HEAD", author, committer,
-                "TidyGit", _oid, [parent]);
-        })
-        .then(function(commitId) {
-            console.log("New Commit:", commitId.allocfmt());
-        })
-        /// PUSH
-        .then(function() {
-            //invoke the git push origin TidyGit function
-            pushBranch()
+    //SIMPLEGIT GIT COMMIT
+    simpleGit(GlobalRepoLocal).commit('TidyGit', function () {
+        //PUSHER
+        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
+            "message": 'git commit'
         });
-
+        console.log('git commit');
+        pushBranch();
+    });
 }
 
 // git push origin TidyGit
 //FIGURE OUT WAY TO PASS IN accessToken FOR PRIVATE REPOS*****
 function pushBranch() {
-    /*require('simple-git')()*/
+    //simpleGit git push origin TidyGit
     simpleGit(GlobalRepoLocal).push(['origin', 'TidyGit:TidyGit'], function() {
+        //PUSHER
+        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitPush', {
+            "message": 'git push origin TidyGit'
+        });
         console.log('push branch done');
         githubPR();
     });
