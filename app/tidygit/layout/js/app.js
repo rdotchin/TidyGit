@@ -50,6 +50,13 @@ module.exports = {
         GlobalRepoLocal = __dirname + '/' + repoName;
         GlobalRepoName = repoName;
 
+
+        simpleGit(__dirname + '/').clone(GlobalRepoURL, GlobalRepoLocal, function(results){
+            console.log('simplegit clone');
+            createBranch();
+        });
+
+/*
         var signature = nodegit.Signature.create(GlobalUser.name, GlobalUser.email, moment().unix(), 0);
 
         nodegit.Clone(GlobalRepoURL, GlobalRepoLocal).then(function(repository) {
@@ -70,12 +77,18 @@ module.exports = {
                     // once the new branch is created change to that branch
                     checkoutBranch();
                 });
-        });
+        });*/
     }
 };
 
+function createBranch(){
+    simpleGit(GlobalRepoLocal).checkoutLocalBranch('TidyGit', function(response){
+        console.log('checked out new branch');
+        parseDir()
+    })
+}
 /* CHECKOUT THE TIDYGIT BRANCH*/
-function checkoutBranch() {
+/*function checkoutBranch() {
 
     nodegit.Repository.open(GlobalRepoLocal).then(function(repo) {
         return repo.getCurrentBranch().then(function(ref) {
@@ -92,7 +105,7 @@ function checkoutBranch() {
         // Parse the directory
         parseDir();
     });
-}
+}*/
 
 /*Find all files in the directory, put the files in an array, only select
   .js files and tidy the js files*/
@@ -133,7 +146,11 @@ function tidyNextFile() {
 /* After the files have run through js-beautify and git add -A this function
    will git commit -m "TidyGit"*/
 function githubCommit() {
-    var _repository;
+    simpleGit(GlobalRepoLocal).commit('TidyGit', function(){
+        console.log('git commit');
+    });
+
+    /*var _repository;
     var _index;
     var _oid;
     var remote;
@@ -141,7 +158,7 @@ function githubCommit() {
     //open a git repo
     nodegit.Repository.open(GlobalRepoLocal)
         .then(function(repo) {
-            /* console.log('commit repo', repo);*/
+            /!* console.log('commit repo', repo);*!/
             _repository = repo;
             return repo.refreshIndex();
         })
@@ -155,7 +172,7 @@ function githubCommit() {
             return _index.writeTree();
         })
         .then(function(oid) {
-            /*console.log("oid");*/
+            /!*console.log("oid");*!/
             _oid = oid;
             return nodegit.Reference.nameToId(_repository, "HEAD");
         })
@@ -179,7 +196,7 @@ function githubCommit() {
             //invoke the git push origin TidyGit function
             pushBranch()
         });
-
+*/
 }
 
 // git push origin TidyGit
