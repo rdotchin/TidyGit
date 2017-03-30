@@ -106,6 +106,7 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 
 //require passport and GitHub api routesroutes
 require('./api/routes/passport-routes.js')(app);
+require('./api/routes/repos-api.js')(app);
 
 
 

@@ -15,8 +15,10 @@
 }
 
 #userPicture {
-    height: 80px;
+    height: 75px;
     width: 80px;
+    border-radius: 30%;
+    margin: 3px 15px 0px 0px;
 }
 
 #search {
