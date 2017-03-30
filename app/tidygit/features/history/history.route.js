@@ -2,7 +2,7 @@ angular
     .module('tidygit.history')
     .config(HistoryConfig);
 
-function HistoryConfig($stateProvider){
+function HistoryConfig($stateProvider) {
     $stateProvider.state({
         name: 'history',
         url: '/history',

@@ -35,9 +35,9 @@ passport.use(new GitHubStrategy({
             where: {
                 githubId: profile.id
             }
-        }).then(function (user) {
+        }).then(function(user) {
             //if there is no user create one
-            if(user == null){
+            if (user == null) {
                 //IF NO USER, CREATE ONE
                 db.Users.create({
                     name: profile.displayName,
@@ -47,12 +47,11 @@ passport.use(new GitHubStrategy({
                     profileUrl: profile.profileUrl,
                     email: profile.emails[0].value,
                     photo: profile.photos[0].value
-                }).then(function (data) {
+                }).then(function(data) {
                     console.log('after create', data);
                     return done(null, data);
                 })
-            }
-            else {
+            } else {
                 //if there is a user update their OAuth token
                 db.Users.update({
                     accessToken: accessToken
@@ -60,13 +59,13 @@ passport.use(new GitHubStrategy({
                     where: {
                         githubId: profile.id
                     }
-                }).then(function (data) {
+                }).then(function(data) {
                     // FIND UPDATED USER AND RETURN IT TO PASSPORT
                     db.Users.findOne({
                         where: {
                             githubId: profile.id
                         }
-                    }).then(function (updatedUser) {
+                    }).then(function(updatedUser) {
                         console.log("updated user", updatedUser);
                         return done(null, updatedUser);
                     });
@@ -112,7 +111,7 @@ require('./api/routes/repos-api.js')(app);
 
 //syncing our sequelize models then starting our express app.  
 //Use force:true after models have been altered or first running the app on a local machine
-db.sequelize.sync({/*force: true*/}).then(function() {
+db.sequelize.sync({ /*force: true*/ }).then(function() {
     app.listen(PORT, function() {
         console.log("listening on http://localhost:" + PORT);
     });

@@ -50,7 +50,7 @@ module.exports = {
         GlobalRepoName = repoName;
 
         //SIMPLEGIT CLONE REPO
-        simpleGit(__dirname + '/').clone(GlobalRepoURL, GlobalRepoLocal, function(results){
+        simpleGit(__dirname + '/').clone(GlobalRepoURL, GlobalRepoLocal, function(results) {
             console.log('simplegit clone');
             //PUSHER
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'clone', {
@@ -62,9 +62,9 @@ module.exports = {
 };
 
 //create branch called TidyGit and checkout that branch
-function createBranch(){
+function createBranch() {
     //SIMPLEGIT CREATE AND CHECKOUT BRANCH
-    simpleGit(GlobalRepoLocal).checkoutLocalBranch('TidyGit', function(response){
+    simpleGit(GlobalRepoLocal).checkoutLocalBranch('TidyGit', function(response) {
         console.log('checked out new branch');
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'branch', {
@@ -128,7 +128,7 @@ function tidyNextFile() {
    will git commit -m "TidyGit"*/
 function githubCommit() {
     //SIMPLEGIT GIT COMMIT
-    simpleGit(GlobalRepoLocal).commit('TidyGit', function () {
+    simpleGit(GlobalRepoLocal).commit('TidyGit', function() {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
             "message": 'git commit'

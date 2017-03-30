@@ -36,16 +36,16 @@ module.exports = function(app) {
         res.sendStatus(200);
     });
 
-    app.get('/history', ensureAuthenticated, function(req, res){
+    app.get('/history', ensureAuthenticated, function(req, res) {
         console.log(req.user.id);
         db.TidyRepos.findAll({
             include: [db.Users],
             where: {
                 userId: req.user.id
             }
-        }).then(function(data){
+        }).then(function(data) {
             res.json(data);
-        }).catch(function(err){
+        }).catch(function(err) {
             console.log(err);
         });
     })
@@ -62,9 +62,9 @@ function repoHistory(userId, repoName, repoURL) {
         userId: userId,
         repoName: repoName,
         URL: repoURL
-    }).then(function (data) {
+    }).then(function(data) {
         console.log('repoHistory updated: ', repoName)
-    }).catch(function (err) {
+    }).catch(function(err) {
         console.log(err);
     })
 }

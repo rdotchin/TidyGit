@@ -7,7 +7,7 @@ function UserService($http) {
     return {
         getUser: function(user) {
             $http.get('/user')
-                .then(function (resp) {
+                .then(function(resp) {
                     user = resp.data;
                 });
         }
