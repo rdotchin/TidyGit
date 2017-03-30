@@ -1,1 +1,51 @@
-test
+<div>
+    <nav class="nav has-shadow">
+        <div class="container">
+            <div class="nav-left">
+                <img class="nav-item" id="logo" src="tidygit/layout/images/tidygitLogo.png" alt="TidyGitLogo">
+                <div class="field nav-item">
+                    <p class="control" id="search">
+                        <input class="input" ng-model="search" type="text" placeholder="Search">
+                    </p>
+                </div>
+            </div>
+            <div class="nav-right">
+
+                <img class="nav-item" id="userPicture" src="{{HistoryVM.user.photo}}" alt="User Photo">
+            </div>
+        </div>
+    </nav>
+
+
+    <!--table-->
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>GitHub</th>
+                <th>Repo URL</th>
+                <th>Repo Name</th>
+                <th>Date/Time</th>
+            </tr>
+            </thead>
+            <tr class="list"
+                ng-repeat="repo in HistoryVM.repoHistory | filter: search"
+                aria-label="repo">
+                <td><a href="{{repo.URL}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
+                <td>{{repo.URL}}</td>
+                <td>{{repo.repoName}}</td>
+                <td>{{repo.createdAt | date : 'short'}}</td>
+
+
+            </tr>
+
+        </table>
+
+
+
+
+
+
+
+
+    </div>
