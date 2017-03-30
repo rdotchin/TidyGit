@@ -64,8 +64,10 @@ function HomeCtrl(user, $http, $timeout) {
         var channelName = repo.owner.login + '-' + repo.name;
         //create pusher channel
         var channel = pusher.subscribe(channelName);
+        tidyStatus(channel);
         //pusher channel if success
         channel.bind('tidy-success', function(data) {
+            console.log('TidyGit Success');
             //button will turn green
             $timeout(function() {
                 repo.status = 'success';
@@ -79,6 +81,7 @@ function HomeCtrl(user, $http, $timeout) {
         });
         //pusher channel if fail
         channel.bind('tidy-fail', function(data) {
+            console.log('TidyGit Fail, check repo for PR or branch');
             //button will turn red
             $timeout(function() {
                 repo.status = 'fail';
@@ -90,5 +93,33 @@ function HomeCtrl(user, $http, $timeout) {
             //unsubscribe from pusher channel
             pusher.unsubscribe(channelName);
         });
+    }
+
+    function tidyStatus(channel) {
+        channel.bind('clone', function(data) {
+            console.log(data);
+        });
+        channel.bind('branch', function(data) {
+            console.log(data);
+        });
+        channel.bind('readFiles', function(data) {
+            console.log(data);
+        });
+        channel.bind('writeFiles', function(data) {
+            console.log(data);
+        });
+        channel.bind('gitAdd', function(data) {
+
+        });
+        channel.bind('gitCommit', function(data) {
+
+        });
+        channel.bind('gitPush', function(data) {
+
+        });
+
+
+
+
     }
 }
