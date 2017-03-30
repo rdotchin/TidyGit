@@ -1,26 +1,24 @@
 module.exports = function(sequelize, DataTypes) {
     var TidyRepos = sequelize.define('TidyRepos', {
-            userId: {
-                type: DataTypes.INTEGER
-            },
-            repoName: {
-                type: DataTypes.STRING
-            },
-            URL: {
-                type: DataTypes.STRING
-            }
+        userId: {
+            type: DataTypes.INTEGER
         },
-        {
-            classMethods: {
-                associate: function(models){
-                    TidyRepos.belongsTo(models.Users, {
-                        foreignKey: 'userId'
-                    })
-                }
-            }
+        repoName: {
+            type: DataTypes.STRING
         },
-        {
-            timestamps: false
-        });
+        URL: {
+            type: DataTypes.STRING
+        }
+    }, {
+        classMethods: {
+            associate: function(models) {
+                TidyRepos.belongsTo(models.Users, {
+                    foreignKey: 'userId'
+                })
+            }
+        }
+    }, {
+        timestamps: false
+    });
     return TidyRepos;
 };

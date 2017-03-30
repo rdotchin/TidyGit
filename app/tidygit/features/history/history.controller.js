@@ -2,7 +2,7 @@ angular
     .module('tidygit.history')
     .controller('HistoryCtrl', HistoryCtrl);
 
-function HistoryCtrl($http){
+function HistoryCtrl($http) {
     const vm = this;
     vm.user = []; //Array to hold the user data
     vm.repoHistory = [];
@@ -20,6 +20,6 @@ function HistoryCtrl($http){
                 vm.repoHistory.push(data);
             });
             console.log(vm.repoHistory);
-    });
+        });
 
 }
