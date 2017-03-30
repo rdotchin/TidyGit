@@ -1,0 +1,22 @@
+<nav class="nav has-shadow">
+    <div class="container">
+        <div class="nav-left">
+            <img class="nav-item" id="logo" src="tidygit/layout/images/tidygitLogo.png" alt="TidyGitLogo">
+            <div class="field nav-item">
+                <p class="control" id="search">
+                    <input class="input" ng-model="NavbarVM.searchData" type="text" placeholder="Search">
+                </p>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <a class="nav-item" ui-sref="home">
+                Home
+            </a>
+            <a class="nav-item" ui-sref="history">
+                History
+            </a>
+            <img class="nav-item" id="userPicture" ng-src="{{NavbarVM.navbarData.user.photo}}" alt="User Photo">
+        </div>
+    </div>
+</nav>

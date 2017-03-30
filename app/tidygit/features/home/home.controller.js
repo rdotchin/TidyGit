@@ -21,6 +21,7 @@ function HomeCtrl(user, $http, $timeout) {
     $http.get('/user')
         .then(function(resp) {
             vm.user = resp.data;
+            console.log(vm.user);
         });
 
 

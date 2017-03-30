@@ -1,4 +1,5 @@
 angular
     .module('tidygit.history', [
-        'tidygit.component.user'
+        'tidygit.component.user',
+        'toDoList.component.navbar'
     ]);
