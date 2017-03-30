@@ -30,7 +30,18 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING
         }
 
-    }, {
+    },
+        {
+        classMethods: {
+            associate: function(models) {
+                Users.hasMany(models.TidyRepos, {
+                    foreignKey: 'userId'
+                });
+            }
+        }
+        },
+
+        {
         timestamps: false
     });
     return Users;

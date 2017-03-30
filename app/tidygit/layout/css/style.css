@@ -30,3 +30,7 @@ i {
 i:hover {
     color: #72d0eb;
 }
+
+.footer {
+    flex: 1
+}

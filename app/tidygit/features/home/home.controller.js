@@ -23,6 +23,7 @@ function HomeCtrl(user, $http, $timeout) {
             vm.user = resp.data;
         });
 
+
     $http.get('/repos')
         .then(function(resp) {
             //Parse response data and push the data for each Github repo to the repoArr
@@ -34,12 +35,14 @@ function HomeCtrl(user, $http, $timeout) {
     /* Make a post to the server sending the repo name to run through TidyGit process.  During this
        process the button will spin then either turn green(success) or red(fail*/
     vm.cleanRepo = function(repo) {
+        console.log('repo', repo);
         repo.status = 'pending'; //Change button to spinning
         var repoName = repo.name;
         var channelName = repo.owner.login + '-' + repoName;
         //Post to send repo name to begin tidy process
         $http.post('/clean/repo', {
-                repoName: repoName
+                repoName: repoName,
+                URL: repo.html_url
             })
             .then(function(resp) {
                 //function to change button to green or red

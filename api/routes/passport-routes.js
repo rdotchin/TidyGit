@@ -1,6 +1,6 @@
 const passport = require('passport');
 const tidyGit = require('../../app/tidygit/layout/js/app.js');
-
+const db = require('../models');
 module.exports = function(app) {
 
     /*  Simple route middleware to ensure user is authenticated.
@@ -26,7 +26,6 @@ module.exports = function(app) {
             failureRedirect: '/'
         }),
         function(req, res) {
-            console.log(req);
             // Successful authentication, redirect home.
             res.redirect("/#!/home");
         });
@@ -53,11 +52,15 @@ module.exports = function(app) {
 
     /* route receiving the repo url and name that that the user would like to tidy FOR TESTING PURPOSES CURRENTLY*/
     app.post('/clean/repo', function(req, res) {
-        console.log('/clean/repo');
-        /*var repoURL = req.body.repoUrl;*/
-        var repoName = req.body.repoName;
+        const userId = req.user.id;
+        const repoName = req.body.repoName;
         const user = req.user;
-        var repoURL = 'https://' + user.accessToken + ':x-oauth-basic@github.com/' + user.username + '/' + repoName + '.git';
+        const repoURL = 'https://' + user.accessToken + ':x-oauth-basic@github.com/' + user.username + '/' + repoName + '.git';
+
+        //add repo to ReposHistory table
+        repoHistory(userId, repoName, req.body.URL);
+
+
         //call the TidyGit function in app.js passing in the users info, repo name and repo url
         tidyGit.cloneRepo(repoURL, repoName, user); // call function in app.js to run tidyGit
 
@@ -68,4 +71,35 @@ module.exports = function(app) {
         res.send(req.user);
     });
 
+    app.get('/history', ensureAuthenticated, function(req, res){
+        console.log(req.user.id);
+        db.TidyRepos.findAll({
+            include: [db.Users],
+            where: {
+                userId: req.user.id
+            }
+        }).then(function(data){
+            res.json(data);
+        }).catch(function(err){
+            console.log(err);
+        });
+       /* res.redirect('/#!/history')*/
+    })
+
 };
+
+//add repo to history table, to be used in history state
+function repoHistory(userId, repoName, repoURL) {
+    console.log('userId', userId);
+    console.log('repoName', repoName);
+    console.log('repoURL', repoURL);
+    db.TidyRepos.create({
+        userId: userId,
+        repoName: repoName,
+        URL: repoURL
+    }).then(function(data){
+        console.log('repoHistory updated: ', repoName)
+    }).catch(function(err){
+        console.log(err);
+    })
+}
