@@ -32,10 +32,10 @@ module.exports = function(sequelize, DataTypes) {
 
     },
         {
-        class_methods: {
+        classMethods: {
             associate: function(models) {
-                User.hasMany(models.ReposHistory, {
-                    foreignKey: 'id'
+                Users.hasMany(models.TidyRepos, {
+                    foreignKey: 'userId'
                 });
             }
         }

@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes) {
-    var ReposHistory = sequelize.define('ReposHistory', {
+    var TidyRepos = sequelize.define('TidyRepos', {
             userId: {
                 type: DataTypes.INTEGER
             },
@@ -11,9 +11,9 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         {
-            class_methods: {
+            classMethods: {
                 associate: function(models){
-                    ReposHistory.belongsTo(models.Users, {
+                    TidyRepos.belongsTo(models.Users, {
                         foreignKey: 'userId'
                     })
                 }
@@ -22,5 +22,5 @@ module.exports = function(sequelize, DataTypes) {
         {
             timestamps: false
         });
-    return ReposHistory;
+    return TidyRepos;
 };

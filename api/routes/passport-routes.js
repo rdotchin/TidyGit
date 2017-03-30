@@ -72,13 +72,28 @@ module.exports = function(app) {
     });
 
     app.get('/history', ensureAuthenticated, function(req, res){
-        res.redirect('/#!/history')
+        console.log(req.user.id);
+        db.TidyRepos.findAll({
+            include: [db.Users],
+            where: {
+                userId: req.user.id
+            }
+        }).then(function(data){
+            res.json(data);
+        }).catch(function(err){
+            console.log(err);
+        });
+       /* res.redirect('/#!/history')*/
     })
 
 };
 
+//add repo to history table, to be used in history state
 function repoHistory(userId, repoName, repoURL) {
-    db.ReposHistory.create({
+    console.log('userId', userId);
+    console.log('repoName', repoName);
+    console.log('repoURL', repoURL);
+    db.TidyRepos.create({
         userId: userId,
         repoName: repoName,
         URL: repoURL
