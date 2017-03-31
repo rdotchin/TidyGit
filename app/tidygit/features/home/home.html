@@ -1,26 +1,6 @@
 <div>
-    <nav class="nav has-shadow">
-        <div class="container">
-            <div class="nav-left">
-                    <img class="nav-item" id="logo" src="tidygit/layout/images/tidygitLogo.png" alt="TidyGitLogo">
-                    <div class="field nav-item">
-                        <p class="control" id="search">
-                            <input class="input" ng-model="search" type="text" placeholder="Search">
-                        </p>
-                    </div>
-            </div>
-
-            <div class="nav-right">
-                <a class="nav-item" ui-sref="home">
-                    Home
-                </a>
-                <a class="nav-item" ui-sref="history">
-                    History
-                </a>
-                <img class="nav-item" id="userPicture" src="{{HomeVM.user.photo}}" alt="User Photo">
-            </div>
-        </div>
-    </nav>
+    <navbar navbar-data="HomeVM"
+            search-data="HomeVM.search"></navbar>
 
 
 
@@ -32,17 +12,17 @@
                     <th>GitHub</th>
                     <th>Repo URL</th>
                     <th>Repo Name</th>
-                    <th>Branches</th>
+                    <!--<th>Branches</th>-->
                     <th>GitTidy</th>
                 </tr>
             </thead>
             <tr class="list"
-                ng-repeat="repo in HomeVM.repoArr | filter: search"
+                ng-repeat="repo in HomeVM.repoArr | filter: HomeVM.search"
                 aria-label="repo">
                 <td><a href="{{repo.html_url}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
                 <td>{{repo.html_url}}</td>
                 <td>{{repo.name}}</td>
-                <td>
+                <!--<td>
                     <div class="field">
                         <p class="control">
                             <span class="select">
@@ -53,12 +33,14 @@
                             </span>
                         </p>
                     </div>
-                </td>
+                </td>-->
 
                 <td>
                     <button class="button is-info"
                             ng-click="HomeVM.cleanRepo(repo)"
-                            ng-class="{'is-loading': repo.status === 'pending', 'is-success': repo.status === 'success', 'is-danger': repo.status === 'fail'}">
+                            ng-class="{'is-loading': repo.status === 'pending',
+                                       'is-success': repo.status === 'success',
+                                       'is-danger': repo.status === 'fail'}">
                     Start</button>
                 </td>
             </tr>
@@ -66,19 +48,7 @@
         </table>
 
     </div>
-    <footer class="footer">
-        <div class="container">
-            <div class="content has-text-centered">
-                <p>
-                    <strong>TidyGit</strong> by <a href="https://github.com/rdotchin">Richard Dotchin</a>. The source code is licensed
-                    <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
-                </p>
-                <p>
-                    <a class="icon" href="https://github.com/rdotchin">
-                        <i class="fa fa-github"></i>
-                    </a>
-                </p>
-            </div>
-        </div>
-    </footer>
+
+    <foot></foot> <!--foot component-->
+
 </div>
