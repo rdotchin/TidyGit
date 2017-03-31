@@ -1,2 +1,2 @@
 angular
-    .module('toDoList.component.navbar', []);
+    .module('tidygit.component.navbar', []);

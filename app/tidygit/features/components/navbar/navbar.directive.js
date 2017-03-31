@@ -1,5 +1,5 @@
 angular
-    .module('toDoList.component.navbar')
+    .module('tidygit.component.navbar')
     .directive('navbar', Navbar);
 
 function Navbar() {

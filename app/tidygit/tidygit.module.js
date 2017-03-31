@@ -3,7 +3,9 @@ angular
         'ui.router',
         'tidygit.login',
         'tidygit.home',
-        'tidygit.history'
+        'tidygit.history',
+        'tidygit.component.navbar',
+        'tidygit.component.foot'
     ])
     .config(tidygitConfig);
 
