@@ -1,7 +1,7 @@
 const execFile = require('child_process').execFile;
 const request = require('request');
 const fs = require('fs');
-const beautify = require('js-beautify').js_beautify;
+const beautifyJS = require('js-beautify').js_beautify;
 const moment = require('moment');
 const simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
@@ -113,9 +113,9 @@ function tidyNextFile() {
             githubCommit();
         });
     }
-    //read the .js file and write it using js-beautify, then run the tidy function again
+    //read the .js file and write it using js-beautifyJS, then run the tidy function again
     fs.readFile(file, 'utf8', function(err, data) {
-        fs.writeFile(file, beautify(data, {
+        fs.writeFile(file, beautifyJS(data, {
             indent_size: 4
         }), function() {
             console.log('successful write');
@@ -124,7 +124,7 @@ function tidyNextFile() {
     });
 }
 
-/* After the files have run through js-beautify and git add -A this function
+/* After the files have run through js-beautifyJS and git add -A this function
    will git commit -m "TidyGit"*/
 function githubCommit() {
     //SIMPLEGIT GIT COMMIT

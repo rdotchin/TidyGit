@@ -7,6 +7,7 @@ function HomeCtrl(user, $http, $timeout) {
     const vm = this;
     vm.repoArr = []; //Array to hold the users repos
     vm.user = []; //Array to hold the user data
+    vm.repoSelected = null;
 
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
@@ -31,12 +32,16 @@ function HomeCtrl(user, $http, $timeout) {
             resp.data.forEach(function(data, indx) {
                 vm.repoArr.push(data);
             });
+            console.log(vm.repoArr);
+
         });
 
     /* Make a post to the server sending the repo name to run through TidyGit process.  During this
        process the button will spin then either turn green(success) or red(fail*/
-    vm.cleanRepo = function(repo) {
+    vm.cleanRepo = function(repo, index) {
+
         console.log('repo', repo);
+        vm.fuck = index;
         repo.status = 'pending'; //Change button to spinning
         var repoName = repo.name;
         var channelName = repo.owner.login + '-' + repoName;
@@ -97,10 +102,13 @@ function HomeCtrl(user, $http, $timeout) {
     }
 
     function tidyStatus(channel) {
+        vm.active = true;
         channel.bind('clone', function(data) {
+            vm.clone = data.message;
             console.log(data);
         });
         channel.bind('branch', function(data) {
+            vm.branch = data.message;
             console.log(data);
         });
         channel.bind('readFiles', function(data) {

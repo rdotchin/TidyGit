@@ -12,7 +12,6 @@
                     <th>GitHub</th>
                     <th>Repo URL</th>
                     <th>Repo Name</th>
-                    <!--<th>Branches</th>-->
                     <th>GitTidy</th>
                 </tr>
             </thead>
@@ -22,33 +21,24 @@
                 <td><a href="{{repo.html_url}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
                 <td>{{repo.html_url}}</td>
                 <td>{{repo.name}}</td>
-                <!--<td>
-                    <div class="field">
-                        <p class="control">
-                            <span class="select">
-                                <select>
-                                    <option>Select dropdown</option>
-                                    <option>With options</option>
-                                </select>
-                            </span>
-                        </p>
-                    </div>
-                </td>-->
-
                 <td>
                     <button class="button is-info"
-                            ng-click="HomeVM.cleanRepo(repo)"
+                            ng-click="HomeVM.cleanRepo(repo, $index)"
                             ng-class="{'is-loading': repo.status === 'pending',
                                        'is-success': repo.status === 'success',
                                        'is-danger': repo.status === 'fail'}">
                     Start</button>
                 </td>
+                <td ng-if="HomeVM.fuck === $index">
+                    {{HomeVM.clone}}<br>
+                    {{HomeVM.branch}}
+
+                </td>
             </tr>
+
 
         </table>
 
     </div>
-
     <foot></foot> <!--foot component-->
-
 </div>
