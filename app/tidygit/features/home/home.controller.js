@@ -41,7 +41,7 @@ function HomeCtrl(user, $http, $timeout) {
     vm.cleanRepo = function(repo, index) {
 
         console.log('repo', repo);
-        vm.fuck = index;
+        vm.index = index;
         repo.status = 'pending'; //Change button to spinning
         var repoName = repo.name;
         var channelName = repo.owner.login + '-' + repoName;

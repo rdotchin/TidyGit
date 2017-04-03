@@ -1,6 +1,5 @@
 const passport = require('passport');
-const tidyGit = require('../../app/tidygit/layout/js/app.js');
-const db = require('../models');
+
 module.exports = function(app) {
 
     /*  Simple route middleware to ensure user is authenticated.

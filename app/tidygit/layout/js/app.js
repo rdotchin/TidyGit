@@ -1,33 +1,30 @@
 const execFile = require('child_process').execFile;
-const request = require('request');
-const fs = require('fs');
-const beautifyJS = require('js-beautify').js_beautify;
-const beautifyCSS = require('js-beautify').css;
-const beautifyHTML = require('js-beautify').html;
-const moment = require('moment');
+const request = require('request'); //request npm package for HTTP calls
+const fs = require('fs'); //file system
+const beautifyJS = require('js-beautify').js_beautify; //JS beautify
+const beautifyCSS = require('js-beautify').css; //CSS beautify
+const beautifyHTML = require('js-beautify').html; //HTML beautify
 const simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
-const Pusher = require('pusher');
+const Pusher = require('pusher'); //websockets to communicate to the client
+//user, token, repo URL, repo name, __dirname + repo name
+var GlobalUser, GlobalToken, GlobalRepoURL, GlobalRepoName, GlobalRepoLocal;
+//counters for specific files beautified to be sent back with pusher
+var JScounter = 0;
+var CSScounter = 0;
+var HTMLcounter = 0;
 
+//Pusher setup
 const pusher = new Pusher({
     appId: '317526',
     key: 'cdd662307ca417771c70',
     secret: 'd571a85c4f5529524913'
 });
 
-
-
-//GLOBAL VARIABLES
-var GlobalUser;
-var GlobalToken;
-var GlobalRepoURL;
-var GlobalRepoName;
-var GlobalRepoLocal;
-
-
+//Export to repos-api.js
 module.exports = {
 
-    /* will return a list of all the users repos, invoked in passport-routes.js*/
+    /* HTTP call to GitHub API to retrieve all of the users repos, function called in passport-routes.js*/
     reposList: function(user, token, cb) {
         const options = {
             'url': 'https://api.github.com/user/repos?access_token=' + token,
@@ -36,10 +33,9 @@ module.exports = {
             }
         };
         request(options, function(err, response, body) {
-            cb(body);
+            cb(body); //callback
         })
     },
-
 
     /*CLONE GITHUB REPO */
     cloneRepo: function(repoURL, repoName, user) {
@@ -50,8 +46,12 @@ module.exports = {
         GlobalRepoURL = repoURL;
         GlobalRepoLocal = __dirname + '/' + repoName;
         GlobalRepoName = repoName;
+        //reset counters
+        JScounter = 0;
+        CSScounter = 0;
+        HTMLcounter = 0;
 
-        //SIMPLEGIT CLONE REPO
+        //git clone GlobalRepoURL
         simpleGit(__dirname + '/').clone(GlobalRepoURL, GlobalRepoLocal, function(results) {
             console.log('simplegit clone');
             //PUSHER
@@ -65,7 +65,7 @@ module.exports = {
 
 //create branch called TidyGit and checkout that branch
 function createBranch() {
-    //SIMPLEGIT CREATE AND CHECKOUT BRANCH
+    //git checkout -b TidyGit
     simpleGit(GlobalRepoLocal).checkoutLocalBranch('TidyGit', function(response) {
         console.log('checked out new branch');
         //PUSHER
@@ -73,7 +73,7 @@ function createBranch() {
             "message": 'TidyGit Branch Created and Checkout'
 
         });
-        parseDir();
+        filterDir();
         /*pullBranch();*/
     })
 }
@@ -83,14 +83,14 @@ function pullBranch() {
         if(err){console.log(err);}
         console.log("PULL", update);
     });
-    parseDir();
+    filterDir();
 }
 
 /*sort all .html .css. js files into an array*/
 var filesToUpdate = [];
 
-function parseDir() {
-
+function filterDir() {
+    //find the directory
     execFile('find', [GlobalRepoLocal], function(err, stdout, stderr) {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'readFiles', {
@@ -98,44 +98,58 @@ function parseDir() {
         });
 
         filesToUpdate = stdout.split('\n');
-
+        //filter files to only include JavaScript, HTML & CSS files
         filesToUpdate = filesToUpdate.filter(function(file) {
             return file.includes(".js") || file.includes(".html") || file.includes(".css");
         });
+
         //tide the files once they are sorted into an array
         tidyNextFile();
     });
 }
+
+
+
 /* Tidy each file.  If there is no file then run the simple git command to
  git commit -A follwed by invoking the function to github commit*/
 function tidyNextFile() {
-    console.log(filesToUpdate);
+    //remove the last file in the array and return that element to be beautified
     var file = filesToUpdate.pop();
-
     //if no file, call the git add -A function
     if (!file) {
+        //send to client the number of files beautified
+        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'writeFiles', {
+            "message": {
+                js: JScounter + ' JavaScript files beautified',
+                html: HTMLcounter + ' HTML Files Beautified',
+                css: CSScounter + ' CSS Files Beautified'
+            }
+        });
         gitAdd();
     }
-    else if(file.includes('.js')){
-        console.log('js');
-        tidyFile(file, beautifyJS);
+    else if (file.includes('.js')) {
+        JScounter++;
+        tidyFile(file, beautifyJS, 'JavaScript');
     }
-    else if(file.includes('.html')){
-        console.log('html');
-        tidyFile(file, beautifyHTML);
+    else if (file.includes('.html')) {
+        HTMLcounter++;
+        tidyFile(file, beautifyHTML, 'HTML');
     }
-    else if(file.includes('.css')){
-        console.log('css');
-       tidyFile(file, beautifyCSS);
+    else if (file.includes('.css')) {
+        CSScounter++;
+        tidyFile(file, beautifyCSS, 'CSS');
+    }
 }
 
-//file is the current file and beautifyType lets js-beautify know which file type it is
+/*read file, beautify and replace the file
+   @param {string} file - the current file
+   @param {function} beautifyType - beautifyJS, beautifyCSS, or beautifyHTML*/
 function tidyFile(file, beautifyType) {
+    console.log(typeof beautifyType);
     fs.readFile(file, 'utf8', function(err, data) {
         fs.writeFile(file, beautifyType(data, {
             indent_size: 4
         }), function() {
-            console.log('successful write');
             tidyNextFile();
         })
     });
@@ -143,11 +157,6 @@ function tidyFile(file, beautifyType) {
 
 
 function gitAdd() {
-    console.log('finished');
-    //PUSHER
-    pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'writeFiles', {
-        "message": 'Files Beautified'
-    });
     return simpleGit(GlobalRepoLocal).raw(['add', '-A'], function() {
         console.log('git add');
         //PUSHER
@@ -158,11 +167,9 @@ function gitAdd() {
     });
 }
 
-}
 /* After the files have run through js-beautifyJS and git add -A this function
    will git commit -m "TidyGit"*/
 function gitCommit() {
-    //SIMPLEGIT GIT COMMIT
     simpleGit(GlobalRepoLocal).commit('TidyGit', function() {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
@@ -173,8 +180,7 @@ function gitCommit() {
     });
 }
 
-// git push origin TidyGit
-//FIGURE OUT WAY TO PASS IN accessToken FOR PRIVATE REPOS*****
+//git push origin TidyGit
 function pushBranch() {
     //simpleGit git push origin TidyGit
     simpleGit(GlobalRepoLocal).push(['-f', 'origin', 'TidyGit:TidyGit'], function() {
@@ -182,12 +188,12 @@ function pushBranch() {
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitPush', {
             "message": 'git push origin TidyGit'
         });
-        console.log('push branch done');
-        githubPR();
+        console.log('git push origin TidyGit');
+        githubPR(); //call Pull Request function
     });
-
 }
-// function for github pull request
+
+// Create GitHub Pull Request for the user
 function githubPR() {
     var header = {
         Authorization: 'token ' + GlobalToken,
@@ -213,7 +219,6 @@ function githubPR() {
         if (err) {
             throw err;
         }
-
         //PUSHER
         //if successful
         if (res.statusCode < 300) {
