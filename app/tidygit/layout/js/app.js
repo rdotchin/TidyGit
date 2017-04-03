@@ -2,6 +2,8 @@ const execFile = require('child_process').execFile;
 const request = require('request');
 const fs = require('fs');
 const beautifyJS = require('js-beautify').js_beautify;
+const beautifyCSS = require('js-beautify').css;
+const beautifyHTML = require('js-beautify').html;
 const moment = require('moment');
 const simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
@@ -69,14 +71,26 @@ function createBranch() {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'branch', {
             "message": 'TidyGit Branch Created and Checkout'
+
         });
-        parseDir()
+        pullBranch();
     })
+}
+
+
+function pullBranch() {
+    simpleGit(GlobalRepoLocal).pull('origin', 'master', function(err, update){
+        if(err){console.log(err);}
+        console.log("PULL", update);
+    });
+    parseDir();
 }
 
 /*Find all files in the directory, put the files in an array, only select
   .js files and tidy the js files*/
 var filesToUpdate = [];
+var filesToUpdateHTML = [];
+var filesToUpdateCSS = [];
 
 function parseDir() {
 
@@ -90,6 +104,12 @@ function parseDir() {
         filesToUpdate = filesToUpdate.filter(function(file) {
             return file.includes(".js") && !file.includes("bower")
         });
+        filesToUpdateHTML = filesToUpdate.filter(function(file) {
+            return file.includes(".html") && !file.includes("node_modules")
+        });
+        filesToUpdateCSS = filesToUpdate.filter(function(file) {
+            return file.includes(".css") && !file.includes("bower")
+        });
 
         tidyNextFile();
     });
@@ -98,7 +118,11 @@ function parseDir() {
 /* Tidy each .js file.  If there is no file then run the simple git command to
    git commit -A follwed by invoking the function to github commit*/
 function tidyNextFile() {
+    /*console.log('HTML FILES', filesToUpdateHTML);
+    console.log('CSS Files', filesToUpdateCSS);*/
     var file = filesToUpdate.pop();
+    /*console.log("FILE", file);*/
+
     //if no file, git add -A then invoke the git commit function
     if (!file) {
         //PUSHER
@@ -110,6 +134,7 @@ function tidyNextFile() {
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitAdd', {
                 "message": 'git add -A'
             });
+
             githubCommit();
         });
     }
@@ -142,7 +167,7 @@ function githubCommit() {
 //FIGURE OUT WAY TO PASS IN accessToken FOR PRIVATE REPOS*****
 function pushBranch() {
     //simpleGit git push origin TidyGit
-    simpleGit(GlobalRepoLocal).push(['origin', 'TidyGit:TidyGit'], function() {
+    simpleGit(GlobalRepoLocal).push(['-f', 'origin', 'TidyGit:TidyGit'], function() {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitPush', {
             "message": 'git push origin TidyGit'
