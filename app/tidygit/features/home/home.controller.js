@@ -7,8 +7,7 @@ function HomeCtrl(user, $http, $timeout) {
     const vm = this;
     vm.repoArr = []; //Array to hold the users repos
     vm.user = []; //Array to hold the user data
-    vm.repoSelected = null;
-    vm.statusBar = 0;
+
 
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
@@ -73,11 +72,12 @@ function HomeCtrl(user, $http, $timeout) {
         var channel = pusher.subscribe(channelName);
         tidyStatus(channel);
         //pusher channel if success
-        channel.bind('tidy-success', function(data) {
-            console.log('TidyGit Success');
-            //button will turn green
+        channel.bind('tidySuccess', function(data) {
+            vm.gitComplete = data.message;
+            vm.statusBar = 100;
+
             $timeout(function() {
-                repo.status = 'success';
+                repo.status = 'success';//button will turn green
                 vm.statusBar = 100;
                 vm.barColor = 'is-success';
             });
@@ -90,8 +90,10 @@ function HomeCtrl(user, $http, $timeout) {
             pusher.unsubscribe(channelName);
         });
         //pusher channel if fail
-        channel.bind('tidy-fail', function(data) {
-            console.log('TidyGit Fail, check repo for PR or branch');
+        channel.bind('tidyFail', function(data) {
+            vm.gitComplete = data.message;
+            vm.statusBar = 100;
+
             //button will turn red
             $timeout(function() {
                 repo.status = 'fail';
@@ -156,7 +158,7 @@ function HomeCtrl(user, $http, $timeout) {
         channel.bind('gitPush', function(data) {
             $timeout(function() {
                 vm.gitPush = data.message;
-                vm.statusBar = 95;
+                vm.statusBar = 90;
             });
         });
     }

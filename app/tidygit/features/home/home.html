@@ -23,6 +23,7 @@
                 <td>{{repo.html_url}}</td>
                 <td>{{repo.name}}</td>
                 <td id="statusData" >
+                    <!--Status updates coming from the server through pusher-->
                     <ul ng-if="HomeVM.index === $index">
                         <li>{{HomeVM.clone}}</li>
                         <li>{{HomeVM.branch}}</li>
@@ -33,6 +34,7 @@
                         <li>{{HomeVM.gitAdd}}</li>
                         <li>{{HomeVM.gitCommit}}</li>
                         <li>{{HomeVM.gitPush}}</li>
+                        <li>{{HomeVM.gitComplete}}</li>
                     </ul>
                 </td>
                 <td>

@@ -223,13 +223,13 @@ function githubPR() {
         //if successful
         if (res.statusCode < 300) {
             //respond back to pusher with success
-            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-success', {
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidySuccess', {
                 "message": '10. Success: ' + res.statusCode + ' Status Code'
             });
         } else {
             //else respond back to pusher with fail
-            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-fail', {
-                "message": '10. Fail: ' + res.statusCode + ' Status Code'
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidyFail', {
+                "message": '10. Fail: Please check for outstanding Pull Request'
             });
         }
 
