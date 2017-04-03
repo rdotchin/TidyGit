@@ -79,8 +79,10 @@ function createBranch() {
 }
 
 function pullBranch() {
-    simpleGit(GlobalRepoLocal).pull('origin', 'master', function(err, update){
-        if(err){console.log(err);}
+    simpleGit(GlobalRepoLocal).pull('origin', 'master', function(err, update) {
+        if (err) {
+            console.log(err);
+        }
         console.log("PULL", update);
     });
     filterDir();
@@ -121,21 +123,18 @@ function tidyNextFile() {
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'writeFiles', {
             "message": {
                 js: '4. ' + JScounter + ' JavaScript files beautified',
-                html: '5. ' +HTMLcounter + ' HTML Files Beautified',
+                html: '5. ' + HTMLcounter + ' HTML Files Beautified',
                 css: '6. ' + CSScounter + ' CSS Files Beautified'
             }
         });
         gitAdd();
-    }
-    else if (file.includes('.js')) {
+    } else if (file.includes('.js')) {
         JScounter++;
         tidyFile(file, beautifyJS, 'JavaScript');
-    }
-    else if (file.includes('.html')) {
+    } else if (file.includes('.html')) {
         HTMLcounter++;
         tidyFile(file, beautifyHTML, 'HTML');
-    }
-    else if (file.includes('.css')) {
+    } else if (file.includes('.css')) {
         CSScounter++;
         tidyFile(file, beautifyCSS, 'CSS');
     }
