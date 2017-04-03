@@ -12,7 +12,8 @@
                     <th>GitHub</th>
                     <th>Repo URL</th>
                     <th>Repo Name</th>
-                    <th>GitTidy</th>
+                    <th>Status</th>
+                    <th>button</th>
                 </tr>
             </thead>
             <tr class="list"
@@ -21,6 +22,21 @@
                 <td><a href="{{repo.html_url}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
                 <td>{{repo.html_url}}</td>
                 <td>{{repo.name}}</td>
+                <td id="statusData" >
+                    <!--Status updates coming from the server through pusher-->
+                    <ul ng-if="HomeVM.index === $index">
+                        <li>{{HomeVM.clone}}</li>
+                        <li>{{HomeVM.branch}}</li>
+                        <li>{{HomeVM.readFiles}}</li>
+                        <li>{{HomeVM.writeFiles.js}}</li>
+                        <li>{{HomeVM.writeFiles.html}}</li>
+                        <li>{{HomeVM.writeFiles.css}}</li>
+                        <li>{{HomeVM.gitAdd}}</li>
+                        <li>{{HomeVM.gitCommit}}</li>
+                        <li>{{HomeVM.gitPush}}</li>
+                        <li>{{HomeVM.gitComplete}}</li>
+                    </ul>
+                </td>
                 <td>
                     <button class="button is-info"
                             ng-click="HomeVM.cleanRepo(repo, $index)"
@@ -28,11 +44,10 @@
                                        'is-success': repo.status === 'success',
                                        'is-danger': repo.status === 'fail'}">
                     Start</button>
-                </td>
-                <td ng-if="HomeVM.fuck === $index">
-                    {{HomeVM.clone}}<br>
-                    {{HomeVM.branch}}
-
+                    <progress ng-if="HomeVM.index === $index"
+                              class="progress {{HomeVM.barColor}}"
+                              value="{{HomeVM.statusBar}}"
+                              max="100"></progress>
                 </td>
             </tr>
 
@@ -40,5 +55,6 @@
         </table>
 
     </div>
+
     <foot></foot> <!--foot component-->
 </div>

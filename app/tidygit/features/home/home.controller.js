@@ -7,7 +7,7 @@ function HomeCtrl(user, $http, $timeout) {
     const vm = this;
     vm.repoArr = []; //Array to hold the users repos
     vm.user = []; //Array to hold the user data
-    vm.repoSelected = null;
+
 
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
@@ -30,6 +30,7 @@ function HomeCtrl(user, $http, $timeout) {
         .then(function(resp) {
             //Parse response data and push the data for each Github repo to the repoArr
             resp.data.forEach(function(data, indx) {
+                console.log(data);
                 vm.repoArr.push(data);
             });
             console.log(vm.repoArr);
@@ -39,9 +40,9 @@ function HomeCtrl(user, $http, $timeout) {
     /* Make a post to the server sending the repo name to run through TidyGit process.  During this
        process the button will spin then either turn green(success) or red(fail*/
     vm.cleanRepo = function(repo, index) {
-
+        resetPusher(); //reset variables set to pusher responses
         console.log('repo', repo);
-        vm.fuck = index;
+        vm.index = index;
         repo.status = 'pending'; //Change button to spinning
         var repoName = repo.name;
         var channelName = repo.owner.login + '-' + repoName;
@@ -72,29 +73,38 @@ function HomeCtrl(user, $http, $timeout) {
         var channel = pusher.subscribe(channelName);
         tidyStatus(channel);
         //pusher channel if success
-        channel.bind('tidy-success', function(data) {
-            console.log('TidyGit Success');
-            //button will turn green
+        channel.bind('tidySuccess', function(data) {
+            vm.gitComplete = data.message;
+            vm.statusBar = 100;
+
             $timeout(function() {
-                repo.status = 'success';
+                repo.status = 'success';//button will turn green
+                vm.statusBar = 100;
+                vm.barColor = 'is-success';
             });
             //go back to blue in 8 seconds
             $timeout(function() {
                 repo.status = null;
+                vm.index = null;
             }, 8000);
             //unsubscribe from pusher channel
             pusher.unsubscribe(channelName);
         });
         //pusher channel if fail
-        channel.bind('tidy-fail', function(data) {
-            console.log('TidyGit Fail, check repo for PR or branch');
+        channel.bind('tidyFail', function(data) {
+            vm.gitComplete = data.message;
+            vm.statusBar = 100;
+
             //button will turn red
             $timeout(function() {
                 repo.status = 'fail';
+                vm.statusBar = 100;
+                vm.barColor = 'is-danger';
             });
             //go back to blue in 8 seconds
             $timeout(function() {
                 repo.status = null;
+                vm.index = null;
             }, 8000);
             //unsubscribe from pusher channel
             pusher.unsubscribe(channelName);
@@ -103,32 +113,64 @@ function HomeCtrl(user, $http, $timeout) {
 
     function tidyStatus(channel) {
         vm.active = true;
+        vm.statusBar = 10;
+        vm.barColor = 'is-info';
         channel.bind('clone', function(data) {
-            vm.clone = data.message;
+
+            $timeout(function() {
+                vm.clone = data.message;
+                vm.statusBar = 30;
+            });
             console.log(data);
         });
         channel.bind('branch', function(data) {
-            vm.branch = data.message;
+            $timeout(function() {
+                vm.branch = data.message;
+                vm.statusBar = 40;
+            });
             console.log(data);
         });
         channel.bind('readFiles', function(data) {
+            $timeout(function() {
+                vm.readFiles = data.message;
+                vm.statusBar = 50;
+            });
             console.log(data);
         });
         channel.bind('writeFiles', function(data) {
+            $timeout(function() {
+                vm.writeFiles = data.message;
+                vm.statusBar = 60;
+            });
             console.log(data);
         });
         channel.bind('gitAdd', function(data) {
-
+            $timeout(function() {
+                vm.gitAdd = data.message;
+                vm.statusBar = 70;
+            });
         });
         channel.bind('gitCommit', function(data) {
-
+            $timeout(function() {
+                vm.gitCommit = data.message;
+                vm.statusBar = 80;
+            });
         });
         channel.bind('gitPush', function(data) {
-
+            $timeout(function() {
+                vm.gitPush = data.message;
+                vm.statusBar = 90;
+            });
         });
-
-
-
-
     }
+
+    function resetPusher() {
+        vm.clone = '';
+        vm.branch = '';
+        vm.readFiles = '';
+        vm.writeFiles = '';
+        vm.gitAdd = '';
+        vm.gitCommit = '';
+        vm.gitPush = '';
+    };
 }

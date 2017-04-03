@@ -36,3 +36,17 @@ i:hover {
 .footer {
     flex: 1
 }
+
+#statusData {
+    font-size: 10px;
+}
+
+.progress {
+    margin-top: 5px;
+    width: 66%;
+    height: .25rem;
+}
+
+#statusData {
+
+}
