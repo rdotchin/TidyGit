@@ -78,7 +78,7 @@ function HomeCtrl(user, $http, $timeout) {
             vm.statusBar = 100;
 
             $timeout(function() {
-                repo.status = 'success';//button will turn green
+                repo.status = 'success'; //button will turn green
                 vm.statusBar = 100;
                 vm.barColor = 'is-success';
             });

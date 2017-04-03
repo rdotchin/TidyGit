@@ -1,22 +1,19 @@
 <div>
-    <navbar navbar-data="HistoryVM"
-            search-data="HistoryVM.search"></navbar>
+    <navbar navbar-data="HistoryVM" search-data="HistoryVM.search"></navbar>
 
 
     <!--table-->
     <div>
         <table class="table">
             <thead>
-            <tr>
-                <th>GitHub</th>
-                <th>Repo URL</th>
-                <th>Repo Name</th>
-                <th>Date/Time</th>
-            </tr>
+                <tr>
+                    <th>GitHub</th>
+                    <th>Repo URL</th>
+                    <th>Repo Name</th>
+                    <th>Date/Time</th>
+                </tr>
             </thead>
-            <tr class="list"
-                ng-repeat="repo in HistoryVM.repoHistory | filter: HistoryVM.search"
-                aria-label="repo">
+            <tr class="list" ng-repeat="repo in HistoryVM.repoHistory | filter: HistoryVM.search" aria-label="repo">
                 <td><a href="{{repo.URL}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
                 <td>{{repo.URL}}</td>
                 <td>{{repo.repoName}}</td>

@@ -48,7 +48,7 @@ passport.use(new GitHubStrategy({
                     email: profile.emails[0].value,
                     photo: profile.photos[0].value
                 }).then(function(data) {
-                   /* console.log('after create', data);*/
+                    /* console.log('after create', data);*/
                     return done(null, data);
                 })
             } else {
