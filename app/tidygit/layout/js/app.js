@@ -7,8 +7,8 @@ const beautifyHTML = require('js-beautify').html; //HTML beautify
 const simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
 const Pusher = require('pusher'); //websockets to communicate to the client
-//user, token, repo URL, repo name, __dirname + repo name
-var GlobalUser, GlobalToken, GlobalRepoURL, GlobalRepoName, GlobalRepoLocal;
+var GlobalUser, GlobalToken, GlobalRepoURL, GlobalRepoName, GlobalRepoLocal; //user, token, repo URL, repo name, __dirname + repo name
+
 //counters for specific files beautified to be sent back with pusher
 var JScounter = 0;
 var CSScounter = 0;
@@ -56,7 +56,7 @@ module.exports = {
             console.log('simplegit clone');
             //PUSHER
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'clone', {
-                "message": GlobalRepoName + ' Cloned'
+                "message": '1. ' + GlobalRepoName + ' Cloned'
             });
             createBranch();
         });
@@ -67,10 +67,10 @@ module.exports = {
 function createBranch() {
     //git checkout -b TidyGit
     simpleGit(GlobalRepoLocal).checkoutLocalBranch('TidyGit', function(response) {
-        console.log('checked out new branch');
+        console.log('git checkout -b TidyGit');
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'branch', {
-            "message": 'TidyGit Branch Created and Checkout'
+            "message": '2. TidyGit Branch Created and Checkout'
 
         });
         filterDir();
@@ -94,7 +94,7 @@ function filterDir() {
     execFile('find', [GlobalRepoLocal], function(err, stdout, stderr) {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'readFiles', {
-            "message": 'Reading Files'
+            "message": '3. Reading Files'
         });
 
         filesToUpdate = stdout.split('\n');
@@ -120,9 +120,9 @@ function tidyNextFile() {
         //send to client the number of files beautified
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'writeFiles', {
             "message": {
-                js: JScounter + ' JavaScript files beautified',
-                html: HTMLcounter + ' HTML Files Beautified',
-                css: CSScounter + ' CSS Files Beautified'
+                js: '4. ' + JScounter + ' JavaScript files beautified',
+                html: '5. ' +HTMLcounter + ' HTML Files Beautified',
+                css: '6. ' + CSScounter + ' CSS Files Beautified'
             }
         });
         gitAdd();
@@ -145,7 +145,7 @@ function tidyNextFile() {
    @param {string} file - the current file
    @param {function} beautifyType - beautifyJS, beautifyCSS, or beautifyHTML*/
 function tidyFile(file, beautifyType) {
-    console.log(typeof beautifyType);
+
     fs.readFile(file, 'utf8', function(err, data) {
         fs.writeFile(file, beautifyType(data, {
             indent_size: 4
@@ -158,10 +158,10 @@ function tidyFile(file, beautifyType) {
 
 function gitAdd() {
     return simpleGit(GlobalRepoLocal).raw(['add', '-A'], function() {
-        console.log('git add');
+        console.log('git add -A');
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitAdd', {
-            "message": 'git add -A'
+            "message": '7. git add -A'
         });
         gitCommit();
     });
@@ -173,7 +173,7 @@ function gitCommit() {
     simpleGit(GlobalRepoLocal).commit('TidyGit', function() {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
-            "message": 'git commit'
+            "message": '8. git commit'
         });
         console.log('git commit');
         pushBranch();
@@ -186,7 +186,7 @@ function pushBranch() {
     simpleGit(GlobalRepoLocal).push(['-f', 'origin', 'TidyGit:TidyGit'], function() {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitPush', {
-            "message": 'git push origin TidyGit'
+            "message": '9. git push origin TidyGit'
         });
         console.log('git push origin TidyGit');
         githubPR(); //call Pull Request function
@@ -224,18 +224,17 @@ function githubPR() {
         if (res.statusCode < 300) {
             //respond back to pusher with success
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-success', {
-                "message": res.statusCode
+                "message": '10. Success: ' + res.statusCode + ' Status Code'
             });
         } else {
             //else respond back to pusher with fail
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidy-fail', {
-                "message": res.statusCode
+                "message": '10. Fail: ' + res.statusCode + ' Status Code'
             });
         }
 
         console.log('statusCode', res.statusCode);
         deleteRepo();
-        /* console.log('body', body);*/
     })
 }
 
