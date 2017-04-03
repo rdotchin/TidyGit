@@ -73,10 +73,10 @@ function createBranch() {
             "message": 'TidyGit Branch Created and Checkout'
 
         });
-        pullBranch();
+        parseDir();
+        /*pullBranch();*/
     })
 }
-
 
 function pullBranch() {
     simpleGit(GlobalRepoLocal).pull('origin', 'master', function(err, update){
@@ -86,11 +86,8 @@ function pullBranch() {
     parseDir();
 }
 
-/*Find all files in the directory, put the files in an array, only select
-  .js files and tidy the js files*/
+/*sort all .html .css. js files into an array*/
 var filesToUpdate = [];
-var filesToUpdateHTML = [];
-var filesToUpdateCSS = [];
 
 function parseDir() {
 
@@ -101,46 +98,41 @@ function parseDir() {
         });
 
         filesToUpdate = stdout.split('\n');
-        filesToUpdate = filesToUpdate.filter(function(file) {
-            return file.includes(".js") && !file.includes("bower")
-        });
-        filesToUpdateHTML = filesToUpdate.filter(function(file) {
-            return file.includes(".html") && !file.includes("node_modules")
-        });
-        filesToUpdateCSS = filesToUpdate.filter(function(file) {
-            return file.includes(".css") && !file.includes("bower")
-        });
 
+        filesToUpdate = filesToUpdate.filter(function(file) {
+            return file.includes(".js") || file.includes(".html") || file.includes(".css");
+        });
+        //tide the files once they are sorted into an array
         tidyNextFile();
     });
 }
-
-/* Tidy each .js file.  If there is no file then run the simple git command to
-   git commit -A follwed by invoking the function to github commit*/
+/* Tidy each file.  If there is no file then run the simple git command to
+ git commit -A follwed by invoking the function to github commit*/
 function tidyNextFile() {
-    /*console.log('HTML FILES', filesToUpdateHTML);
-    console.log('CSS Files', filesToUpdateCSS);*/
+    console.log(filesToUpdate);
     var file = filesToUpdate.pop();
-    /*console.log("FILE", file);*/
 
-    //if no file, git add -A then invoke the git commit function
+    //if no file, call the git add -A function
     if (!file) {
-        //PUSHER
-        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'writeFiles', {
-            "message": 'Files Beautified'
-        });
-        return simpleGit(GlobalRepoLocal).raw(['add', '-A'], function() {
-            //PUSHER
-            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitAdd', {
-                "message": 'git add -A'
-            });
-
-            githubCommit();
-        });
+        gitAdd();
     }
-    //read the .js file and write it using js-beautifyJS, then run the tidy function again
+    else if(file.includes('.js')){
+        console.log('js');
+        tidyFile(file, beautifyJS);
+    }
+    else if(file.includes('.html')){
+        console.log('html');
+        tidyFile(file, beautifyHTML);
+    }
+    else if(file.includes('.css')){
+        console.log('css');
+       tidyFile(file, beautifyCSS);
+}
+
+//file is the current file and beautifyType lets js-beautify know which file type it is
+function tidyFile(file, beautifyType) {
     fs.readFile(file, 'utf8', function(err, data) {
-        fs.writeFile(file, beautifyJS(data, {
+        fs.writeFile(file, beautifyType(data, {
             indent_size: 4
         }), function() {
             console.log('successful write');
@@ -149,9 +141,27 @@ function tidyNextFile() {
     });
 }
 
+
+function gitAdd() {
+    console.log('finished');
+    //PUSHER
+    pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'writeFiles', {
+        "message": 'Files Beautified'
+    });
+    return simpleGit(GlobalRepoLocal).raw(['add', '-A'], function() {
+        console.log('git add');
+        //PUSHER
+        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitAdd', {
+            "message": 'git add -A'
+        });
+        gitCommit();
+    });
+}
+
+}
 /* After the files have run through js-beautifyJS and git add -A this function
    will git commit -m "TidyGit"*/
-function githubCommit() {
+function gitCommit() {
     //SIMPLEGIT GIT COMMIT
     simpleGit(GlobalRepoLocal).commit('TidyGit', function() {
         //PUSHER
