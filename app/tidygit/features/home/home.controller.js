@@ -30,6 +30,7 @@ function HomeCtrl(user, $http, $timeout) {
         .then(function(resp) {
             //Parse response data and push the data for each Github repo to the repoArr
             resp.data.forEach(function(data, indx) {
+                console.log(data);
                 vm.repoArr.push(data);
             });
             console.log(vm.repoArr);
