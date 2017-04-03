@@ -40,7 +40,7 @@ function HomeCtrl(user, $http, $timeout) {
     /* Make a post to the server sending the repo name to run through TidyGit process.  During this
        process the button will spin then either turn green(success) or red(fail*/
     vm.cleanRepo = function(repo, index) {
-
+        resetPusher(); //reset variables set to pusher responses
         console.log('repo', repo);
         vm.index = index;
         repo.status = 'pending'; //Change button to spinning
@@ -160,4 +160,14 @@ function HomeCtrl(user, $http, $timeout) {
             });
         });
     }
+
+    function resetPusher() {
+        vm.clone = '';
+        vm.branch = '';
+        vm.readFiles = '';
+        vm.writeFiles = '';
+        vm.gitAdd = '';
+        vm.gitCommit = '';
+        vm.gitPush = '';
+    };
 }
