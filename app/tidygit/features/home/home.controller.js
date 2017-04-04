@@ -41,7 +41,7 @@ function HomeCtrl(user, $http, $timeout) {
        process the button will spin then either turn green(success) or red(fail*/
     vm.cleanRepo = function(repo, index) {
         resetPusher(); //reset variables set to pusher responses
-        console.log('repo', repo);
+        vm.buttonsDisabled = true;
         vm.index = index;
         repo.status = 'pending'; //Change button to spinning
         var repoName = repo.name;
@@ -68,51 +68,44 @@ function HomeCtrl(user, $http, $timeout) {
     /*use the response back from pusher to change the submit button to either
      green(success) or red(fail)*/
     function buttonResp(repo, resp) {
-        var channelName = repo.owner.login + '-' + repo.name;
-        //create pusher channel
-        var channel = pusher.subscribe(channelName);
-        tidyStatus(channel);
+        var channelName = repo.owner.login + '-' + repo.name; //set pusher channel name
+        var channel = pusher.subscribe(channelName); //create pusher channel
+        tidyStatus(channel); //function containing pusher communication
         //pusher channel if success
         channel.bind('tidySuccess', function(data) {
-            vm.gitComplete = data.message;
-            vm.statusBar = 100;
-
             $timeout(function() {
+                vm.gitComplete = data.message; //success message
+                vm.statusBar = 100; //status bar at 100%
+                vm.barColor = 'is-success'; //status bar turns green
                 repo.status = 'success';//button will turn green
-                vm.statusBar = 100;
-                vm.barColor = 'is-success';
+                vm.buttonsDisabled = false; //enable buttons
             });
             //go back to blue in 8 seconds
             $timeout(function() {
                 repo.status = null;
                 vm.index = null;
             }, 8000);
-            //unsubscribe from pusher channel
-            pusher.unsubscribe(channelName);
+            pusher.unsubscribe(channelName); //unsubscribe from pusher channel
         });
         //pusher channel if fail
         channel.bind('tidyFail', function(data) {
-            vm.gitComplete = data.message;
-            vm.statusBar = 100;
-
-            //button will turn red
             $timeout(function() {
-                repo.status = 'fail';
-                vm.statusBar = 100;
-                vm.barColor = 'is-danger';
+                vm.gitComplete = data.message; //error message
+                vm.statusBar = 100; //status bar at 100%
+                vm.barColor = 'is-danger';//status bar turns red
+                repo.status = 'fail'; //button turns red
+                vm.buttonsDisabled = false; //enable buttons
             });
             //go back to blue in 8 seconds
             $timeout(function() {
-                repo.status = null;
-                vm.index = null;
+                repo.status = null; //reset status for button ng-class
+                vm.index = null; //reset index for button ng-click
             }, 8000);
-            //unsubscribe from pusher channel
-            pusher.unsubscribe(channelName);
+            pusher.unsubscribe(channelName); //unsubscribe from pusher channel
         });
     }
 
     function tidyStatus(channel) {
-        vm.active = true;
         vm.statusBar = 10;
         vm.barColor = 'is-info';
         channel.bind('clone', function(data) {
@@ -172,5 +165,6 @@ function HomeCtrl(user, $http, $timeout) {
         vm.gitAdd = '';
         vm.gitCommit = '';
         vm.gitPush = '';
+        vm.gitComplete = '';
     };
 }

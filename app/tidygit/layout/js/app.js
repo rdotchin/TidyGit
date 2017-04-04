@@ -202,7 +202,7 @@ function githubPR() {
     };
     var body = {
         "title": "TidyGit",
-        "body": "![](https://media.giphy.com/media/gBOmoFv3SAlLG/giphy.gif)",
+        "body": "Thank you for using TidyGit",
         "head": "TidyGit",
         "base": "master"
     };
@@ -224,7 +224,7 @@ function githubPR() {
         if (res.statusCode < 300) {
             //respond back to pusher with success
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'tidySuccess', {
-                "message": '10. Success: ' + res.statusCode + ' Status Code'
+                "message": '10. Success: Pull Request Created'
             });
         } else {
             //else respond back to pusher with fail

@@ -38,23 +38,24 @@
                     </ul>
                 </td>
                 <td>
+                    <!--ng-click: starts the clean repo process passes in repo name and index number
+                        ng-disabled: disables all the buttons while the app runs
+                        ng-class: changes the button to spinning, green/red-->
                     <button class="button is-info"
                             ng-click="HomeVM.cleanRepo(repo, $index)"
+                            ng-disabled="HomeVM.buttonsDisabled"
                             ng-class="{'is-loading': repo.status === 'pending',
                                        'is-success': repo.status === 'success',
                                        'is-danger': repo.status === 'fail'}">
                     Start</button>
+
                     <progress ng-if="HomeVM.index === $index"
                               class="progress {{HomeVM.barColor}}"
                               value="{{HomeVM.statusBar}}"
                               max="100"></progress>
                 </td>
             </tr>
-
-
         </table>
-
     </div>
-
     <foot></foot> <!--foot component-->
 </div>
