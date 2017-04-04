@@ -103,7 +103,7 @@ function filterDir() {
         filesToUpdate = stdout.split('\n');
         //filter files to only include JavaScript, HTML & CSS files
         filesToUpdate = filesToUpdate.filter(function(file) {
-            return file.includes(".js") || file.includes(".html") || file.includes(".css");
+            return file.includes(".js") && !file.includes(".json") || file.includes(".html") || file.includes(".css");
         });
 
         //tide the files once they are sorted into an array
