@@ -171,9 +171,9 @@ function gitAdd() {
    will git commit -m "TidyGit"*/
 function gitCommit() {
     simpleGit(GlobalRepoLocal)
-        .addConfig('user.name', 'Richard Dotchin')
-        .addConfig('user.email', 'richard.dotchin@gmail.com')
-        .commit('TidyGit', {'--author': '"Richard Dotchin <richard.dotchin@gmail.com>"'}, function(err, result) {
+        .addConfig('user.name', GlobalUser.name)
+        .addConfig('user.email', GlobalUser.email)
+        .commit('TidyGit', {'--author': GlobalUser.name + ' <' + GlobalUser.email + '>'}, function(err, result) {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
             "message": '8. git commit'
