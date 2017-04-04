@@ -7,6 +7,7 @@ const beautifyHTML = require('js-beautify').html; //HTML beautify
 const simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
 const Pusher = require('pusher'); //websockets to communicate to the client
+const _ = require('lodash');
 var GlobalUser, GlobalToken, GlobalRepoURL, GlobalRepoName, GlobalRepoLocal; //user, token, repo URL, repo name, __dirname + repo name
 
 //counters for specific files beautified to be sent back with pusher
@@ -99,13 +100,13 @@ function filterDir() {
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'readFiles', {
             "message": '3. Reading Files'
         });
-
+        const allowedExtensions = ['js', 'html', 'css'];
         filesToUpdate = stdout.split('\n');
         //filter files to only include JavaScript, HTML & CSS files
         filesToUpdate = filesToUpdate.filter(function(file) {
-            return file.includes(".js") && !file.includes(".json") || file.includes(".html") || file.includes(".css");
+            return _.includes(allowedExtensions, _.last(file.split('.')));
         });
-
+        console.log(filesToUpdate);
         //tide the files once they are sorted into an array
         tidyNextFile();
     });
