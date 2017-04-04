@@ -182,7 +182,7 @@ function gitCommit() {
 //git push origin TidyGit
 function pushBranch() {
     //simpleGit git push origin TidyGit
-    simpleGit(GlobalRepoLocal).push(['-f', 'origin', 'TidyGit:TidyGit'], function() {
+    simpleGit(GlobalRepoLocal).push(['origin', 'TidyGit:TidyGit'], function() {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitPush', {
             "message": '9. git push origin TidyGit'
