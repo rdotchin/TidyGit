@@ -170,9 +170,10 @@ function gitAdd() {
 /* After the files have run through js-beautifyJS and git add -A this function
    will git commit -m "TidyGit"*/
 function gitCommit() {
+    //git commit --author GlobalUser.name <GlobalUser.email> -m "TidyGit"
     simpleGit(GlobalRepoLocal)
-        .addConfig('user.name', GlobalUser.name)
-        .addConfig('user.email', GlobalUser.email)
+        .addConfig('user.name', GlobalUser.name) //set local config name
+        .addConfig('user.email', GlobalUser.email) //set local config email
         .commit('TidyGit', {'--author': GlobalUser.name + ' <' + GlobalUser.email + '>'}, function(err, result) {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
@@ -203,16 +204,13 @@ function githubPR() {
         "User-Agent": GlobalUser.username,
         "scopes": "repo"
     };
-    console.log('header', header);
     var body = {
         "title": "TidyGit",
         "body": "Thank you for using TidyGit",
         "head": "TidyGit",
         "base": "master"
     };
-    console.log('body', body);
     var url = "https://api.github.com/repos/" + GlobalUser.username + "/" + GlobalRepoName + "/pulls";
-    console.log('url', url)
     var options = {
         method: 'post',
         headers: header,
@@ -225,8 +223,6 @@ function githubPR() {
         if (err) {
             console.log(err);
         }
-        console.log('body', body);
-
         //PUSHER
         //if successful
         if (res.statusCode < 300) {
@@ -240,7 +236,6 @@ function githubPR() {
                 "message": '10. Fail: Please check for outstanding Pull Request'
             });
         }
-
         console.log('statusCode', res.statusCode);
         deleteRepo();
     })
