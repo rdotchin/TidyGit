@@ -84,7 +84,7 @@ function HomeCtrl(user, $http, $timeout) {
             //go back to blue in 8 seconds
             $timeout(function() {
                 repo.status = null;
-                vm.index = null;
+                /*vm.index = null;*/
             }, 8000);
             pusher.unsubscribe(channelName); //unsubscribe from pusher channel
         });
@@ -100,7 +100,7 @@ function HomeCtrl(user, $http, $timeout) {
             //go back to blue in 8 seconds
             $timeout(function() {
                 repo.status = null; //reset status for button ng-class
-                vm.index = null; //reset index for button ng-click
+                /*vm.index = null;*/ //reset index for button ng-click
             }, 8000);
             pusher.unsubscribe(channelName); //unsubscribe from pusher channel
         });

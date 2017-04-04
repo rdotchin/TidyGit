@@ -9,7 +9,8 @@
                     <th>Repo URL</th>
                     <th>Repo Name</th>
                     <th>Status</th>
-                    <th>button</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tr class="list" ng-repeat="repo in HomeVM.repoArr | filter: HomeVM.search" aria-label="repo">
@@ -48,6 +49,12 @@
                               value="{{HomeVM.statusBar}}"
                               max="100"></progress>
                 </td>
+                <td><a class="is-dark"
+                            ng-if="HomeVM.index === $index"
+                            href="{{repo.html_url}}/pulls"
+                            target="_blank">
+                    <i class="fa fa-github-square fa-2x"></i>
+                </a></td>
             </tr>
         </table>
     </div>
