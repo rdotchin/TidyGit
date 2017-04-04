@@ -19,27 +19,23 @@ function HomeCtrl(user, $http, $timeout) {
 
     /* Get request to retrieve the users information.  Need the username to pull
     their github repos*/
-    $http.get('/user')
-        .then(function(resp) {
-            vm.user = resp.data;
-            console.log(vm.user);
-        });
+    user.getUser(vm.user);
 
 
     $http.get('/repos')
         .then(function(resp) {
             //Parse response data and push the data for each Github repo to the repoArr
             resp.data.forEach(function(data, indx) {
-                console.log(data);
                 vm.repoArr.push(data);
             });
-            console.log(vm.repoArr);
+
 
         });
 
     /* Make a post to the server sending the repo name to run through TidyGit process.  During this
        process the button will spin then either turn green(success) or red(fail*/
     vm.cleanRepo = function(repo, index) {
+        console.log(vm.user);
         resetPusher(); //reset variables set to pusher responses
         vm.buttonsDisabled = true;
         vm.index = index;

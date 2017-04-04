@@ -27,7 +27,7 @@ const db = require("./api/models");
 passport.use(new GitHubStrategy({
         clientID: "a9236c2bd104aff0b72e",
         clientSecret: "1cd8b65feef743409d63c189915b2b76bc415a70",
-        callbackURL: "http://127.0.0.1:8080/auth/github/callback"
+        callbackURL: "https://boiling-scrubland-68898.herokuapp.com"
     },
     function(accessToken, refreshToken, profile, done) {
         //Find user by github id

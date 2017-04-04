@@ -5,7 +5,8 @@ angular
         'tidygit.home',
         'tidygit.history',
         'tidygit.component.navbar',
-        'tidygit.component.foot'
+        'tidygit.component.foot',
+        'tidygit.component.user'
     ])
     .config(tidygitConfig);
 
