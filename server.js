@@ -30,6 +30,7 @@ passport.use(new GitHubStrategy({
         callbackURL: "https://boiling-scrubland-68898.herokuapp.com/auth/github/callback"
     },
     function(accessToken, refreshToken, profile, done) {
+        console.log(accessToken);
         //Find user by github id
         db.Users.findOne({
             where: {

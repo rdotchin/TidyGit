@@ -221,7 +221,7 @@ function githubPR() {
         if (err) {
             console.log(err);
         }
-        console.log('res', res);
+        console.log('body', body);
 
         //PUSHER
         //if successful
