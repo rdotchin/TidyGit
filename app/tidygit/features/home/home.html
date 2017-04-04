@@ -1,6 +1,5 @@
 <div>
-    <navbar navbar-data="HomeVM"
-            search-data="HomeVM.search"></navbar>
+    <navbar navbar-data="HomeVM" search-data="HomeVM.search"></navbar>
 
 
 
@@ -16,13 +15,11 @@
                     <th>button</th>
                 </tr>
             </thead>
-            <tr class="list"
-                ng-repeat="repo in HomeVM.repoArr | filter: HomeVM.search"
-                aria-label="repo">
+            <tr class="list" ng-repeat="repo in HomeVM.repoArr | filter: HomeVM.search" aria-label="repo">
                 <td><a href="{{repo.html_url}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
                 <td>{{repo.html_url}}</td>
                 <td>{{repo.name}}</td>
-                <td id="statusData" >
+                <td id="statusData">
                     <!--Status updates coming from the server through pusher-->
                     <ul ng-if="HomeVM.index === $index">
                         <li>{{HomeVM.clone}}</li>
@@ -57,5 +54,7 @@
             </tr>
         </table>
     </div>
+
     <foot></foot> <!--foot component-->
+
 </div>
