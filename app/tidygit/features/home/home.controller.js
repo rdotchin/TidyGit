@@ -55,7 +55,8 @@ function HomeCtrl(user, $http, $timeout) {
                 //function to change button to green or red
                 buttonResp(repo, resp);
             })
-            .catch(function(error) {
+            .catch(function(err) {
+                if(err){console.log(err);}
                 //if error button will turn red
                 repo.status = 'fail';
 

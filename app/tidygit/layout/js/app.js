@@ -199,13 +199,16 @@ function githubPR() {
         "User-Agent": GlobalUser.username,
         "scopes": "repo"
     };
+    console.log('header', header);
     var body = {
         "title": "TidyGit",
         "body": "Thank you for using TidyGit",
         "head": "TidyGit",
         "base": "master"
     };
+    console.log('body', body);
     var url = "https://api.github.com/repos/" + GlobalUser.username + "/" + GlobalRepoName + "/pulls";
+    console.log('url', url)
     var options = {
         method: 'post',
         headers: header,
@@ -216,8 +219,10 @@ function githubPR() {
 
     request.post(options, function(err, res, body) {
         if (err) {
-            throw err;
+            console.log(err);
         }
+        console.log('res', res);
+
         //PUSHER
         //if successful
         if (res.statusCode < 300) {
