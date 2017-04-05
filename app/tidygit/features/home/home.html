@@ -5,17 +5,14 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>GitHub</th>
                     <th>Repo URL</th>
                     <th>Repo Name</th>
-                    <th>Status</th>
-                    <th></th>
-                    <th></th>
+                    <th id="statusRow">Status</th>
+                    <th width="1%"></th>
                 </tr>
             </thead>
             <tr class="list" ng-repeat="repo in HomeVM.repoArr | filter: HomeVM.search" aria-label="repo">
-                <td><a href="{{repo.html_url}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
-                <td>{{repo.html_url}}</td>
+                <td><a href="{{repo.html_url}}" target="_blank">{{repo.html_url}}</a></td>
                 <td>{{repo.name}}</td>
                 <td id="statusData">
                     <!--Status updates coming from the server through pusher-->
@@ -31,30 +28,33 @@
                         <li>{{HomeVM.gitPush}}</li>
                         <li>{{HomeVM.gitComplete}}</li>
                     </ul>
+                    <span ng-if="HomeVM.index !== $index">--</span>
                 </td>
                 <td>
                     <!--ng-click: starts the clean repo process passes in repo name and index number
                         ng-disabled: disables all the buttons while the app runs
                         ng-class: changes the button to spinning, green/red-->
-                    <button class="button is-info"
-                            ng-click="HomeVM.cleanRepo(repo, $index)"
-                            ng-disabled="HomeVM.buttonsDisabled"
-                            ng-class="{'is-loading': repo.status === 'pending',
-                                       'is-success': repo.status === 'success',
-                                       'is-danger': repo.status === 'fail'}">
-                    Start</button>
+                    <div>
+                        <button class="button is-info"
+                                ng-click="HomeVM.cleanRepo(repo, $index)"
+                                ng-disabled="HomeVM.buttonsDisabled"
+                                ng-class="{'is-loading': HomeVM.index === $index && repo.status === 'pending',
+                                       'is-success': HomeVM.index === $index && repo.status === 'success',
+                                       'is-danger': HomeVM.index === $index && repo.status === 'fail'}">
+                            Start</button>
+                        <a class="button is-black"
+                           ng-if="HomeVM.index === $index && repo.status === 'success'"
+                           href="{{repo.html_url}}/pulls"
+                           target="_blank">
+                            <i class="fa fa-github-square fa-2x"></i>
+                        </a>
+                    </div>
 
-                    <progress ng-if="HomeVM.index === $index"
+                    <progress ng-if="HomeVM.index === $index && repo.status"
                               class="progress {{HomeVM.barColor}}"
                               value="{{HomeVM.statusBar}}"
                               max="100"></progress>
                 </td>
-                <td><a class="is-dark"
-                            ng-if="repo.status === 'success'"
-                            href="{{repo.html_url}}/pulls"
-                            target="_blank">
-                    <i class="fa fa-github-square fa-2x"></i>
-                </a></td>
             </tr>
         </table>
     </div>

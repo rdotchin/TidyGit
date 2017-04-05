@@ -23,14 +23,6 @@
     margin-top: 14px;
 }
 
-i {
-    color: black;
-}
-
-i:hover {
-    color: #72d0eb;
-}
-
 .footer {
     flex: 1
 }
@@ -41,8 +33,21 @@ i:hover {
 
 .progress {
     margin-top: 5px;
-    width: 66%;
     height: .25rem;
 }
 
-#statusData {}
+.table td, .table th {
+    vertical-align: middle;
+}
+
+.table td:last-child > * {
+    white-space: nowrap;
+}
+
+a {
+     color: #3273dc;
+}
+
+a:hover {
+    color:  #276cda;
+}

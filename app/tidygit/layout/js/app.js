@@ -28,7 +28,7 @@ module.exports = {
     /* HTTP call to GitHub API to retrieve all of the users repos, function called in passport-routes.js*/
     reposList: function(user, token, cb) {
         const options = {
-            'url': 'https://api.github.com/user/repos?page=1&per_page=100&access_token=' + token,
+            'url': 'https://api.github.com/user/repos?page=1&per_page=100&affiliation=owner&access_token=' + token,
             'headers': {
                 'User-Agent': user
             }

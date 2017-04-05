@@ -7,15 +7,13 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>GitHub</th>
                     <th>Repo URL</th>
                     <th>Repo Name</th>
                     <th>Date/Time</th>
                 </tr>
             </thead>
             <tr class="list" ng-repeat="repo in HistoryVM.repoHistory | filter: HistoryVM.search" aria-label="repo">
-                <td><a href="{{repo.URL}}" target="_blank"><i class="fa fa-github-square fa-2x"></i></a></td>
-                <td>{{repo.URL}}</td>
+                <td><a href="{{repo.URL}}" target="_blank">{{repo.URL}}</a></td>
                 <td>{{repo.repoName}}</td>
                 <td>{{repo.createdAt | date : 'short'}}</td>
 
