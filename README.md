@@ -4,11 +4,13 @@
 ## About:
 TidyGit is an automated GitHub repository beautifier.
 
-When a repository is selected it will be cloned to the  server, a new branch created, 
-checkout new branch, parse the directory, beautify all JavaScript/HTML/CSS files, git add, 
-git commit, git push the branch and create a pull request for the user.
+When the user selects a repository TidyGit will 
+* Clone the repo
+* Create a new branch called TidyGit 
+* All HTML/CSS/JS files will be beautified recursively
+* The changes will be committed and pushed 
+* A pull request will be created for the user
  
-Pusher is implemented to provide real time updates through websockets.
 
 ## Custom Beautify Options
 
