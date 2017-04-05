@@ -175,14 +175,16 @@ function gitCommit() {
     simpleGit(GlobalRepoLocal)
         .addConfig('user.name', GlobalUser.name) //set local config name
         .addConfig('user.email', GlobalUser.email) //set local config email
-        .commit('TidyGit', {'--author': GlobalUser.name + ' <' + GlobalUser.email + '>'}, function(err, result) {
-        //PUSHER
-        pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
-            "message": '8. git commit'
+        .commit('TidyGit', {
+            '--author': GlobalUser.name + ' <' + GlobalUser.email + '>'
+        }, function(err, result) {
+            //PUSHER
+            pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
+                "message": '8. git commit'
+            });
+            console.log('git commit', err);
+            pushBranch();
         });
-        console.log('git commit', err);
-        pushBranch();
-    });
 }
 
 //git push origin TidyGit

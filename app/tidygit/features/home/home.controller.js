@@ -56,7 +56,9 @@ function HomeCtrl(user, $http, $timeout) {
                 buttonResp(repo, resp);
             })
             .catch(function(err) {
-                if(err){console.log(err);}
+                if (err) {
+                    console.log(err);
+                }
                 //if error button will turn red
                 repo.status = 'fail';
 
@@ -78,7 +80,7 @@ function HomeCtrl(user, $http, $timeout) {
                 vm.gitComplete = data.message; //success message
                 vm.statusBar = 100; //status bar at 100%
                 vm.barColor = 'is-success'; //status bar turns green
-                repo.status = 'success';//button will turn green
+                repo.status = 'success'; //button will turn green
                 vm.buttonsDisabled = false; //enable buttons
             });
             //go back to blue in 8 seconds
@@ -93,7 +95,7 @@ function HomeCtrl(user, $http, $timeout) {
             $timeout(function() {
                 vm.gitComplete = data.message; //error message
                 vm.statusBar = 100; //status bar at 100%
-                vm.barColor = 'is-danger';//status bar turns red
+                vm.barColor = 'is-danger'; //status bar turns red
                 repo.status = 'fail'; //button turns red
                 vm.buttonsDisabled = false; //enable buttons
             });

@@ -36,18 +36,19 @@
     height: .25rem;
 }
 
-.table td, .table th {
+.table td,
+.table th {
     vertical-align: middle;
 }
 
-.table td:last-child > * {
+.table td:last-child>* {
     white-space: nowrap;
 }
 
 a {
-     color: #3273dc;
+    color: #3273dc;
 }
 
 a:hover {
-    color:  #276cda;
+    color: #276cda;
 }
