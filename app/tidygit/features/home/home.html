@@ -35,30 +35,22 @@
                         ng-disabled: disables all the buttons while the app runs
                         ng-class: changes the button to spinning, green/red-->
                     <div>
-                        <button class="button is-info"
-                                ng-click="HomeVM.cleanRepo(repo, $index)"
-                                ng-disabled="HomeVM.buttonsDisabled"
-                                ng-class="{'is-loading': HomeVM.index === $index && repo.status === 'pending',
+                        <button class="button is-info" ng-click="HomeVM.cleanRepo(repo, $index)" ng-disabled="HomeVM.buttonsDisabled" ng-class="{'is-loading': HomeVM.index === $index && repo.status === 'pending',
                                        'is-success': HomeVM.index === $index && repo.status === 'success',
                                        'is-danger': HomeVM.index === $index && repo.status === 'fail'}">
                             Start</button>
-                        <a class="button is-black"
-                           ng-if="HomeVM.index === $index && repo.status === 'success'"
-                           href="{{repo.html_url}}/pulls"
-                           target="_blank">
+                        <a class="button is-black" ng-if="HomeVM.index === $index && repo.status === 'success'" href="{{repo.html_url}}/pulls" target="_blank">
                             <i class="fa fa-github-square fa-2x"></i>
                         </a>
                     </div>
 
-                    <progress ng-if="HomeVM.index === $index && repo.status"
-                              class="progress {{HomeVM.barColor}}"
-                              value="{{HomeVM.statusBar}}"
-                              max="100"></progress>
+                    <progress ng-if="HomeVM.index === $index && repo.status" class="progress {{HomeVM.barColor}}" value="{{HomeVM.statusBar}}" max="100"></progress>
                 </td>
             </tr>
         </table>
     </div>
 
-    <foot></foot> <!--foot component-->
+    <foot></foot>
+    <!--foot component-->
 
 </div>
