@@ -6,9 +6,10 @@ const logger = require("morgan");
 var session = require('express-session');
 const bodyParser = require('body-parser');
 const GitHubStrategy = require('passport-github').Strategy;
+require('dotenv').config();
 const PORT = process.env.PORT || 8080;
 
-
+console.log(process.env.CLIENT_ID);
 /*================================PASSPORT GITHUB=================================================*/
 
 passport.serializeUser(function(user, done) {
@@ -19,15 +20,14 @@ passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
 
-
 //requiring our models for syncing
 const db = require("./api/models");
 
 // Passport Github
 passport.use(new GitHubStrategy({
-        clientID: "a9236c2bd104aff0b72e",
-        clientSecret: "1cd8b65feef743409d63c189915b2b76bc415a70",
-        callbackURL: "https://boiling-scrubland-68898.herokuapp.com/auth/github/callback"
+        clientID: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        callbackURL: process.env.CALLBACK_URL
     },
     function(accessToken, refreshToken, profile, done) {
         console.log(accessToken);

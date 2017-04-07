@@ -32,6 +32,7 @@ jspm_packages
 app/bower_components
 testfile
 .idea
+.env
 
 # Optional npm cache directory
 .npm
