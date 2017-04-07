@@ -6,7 +6,7 @@ const logger = require("morgan");
 var session = require('express-session');
 const bodyParser = require('body-parser');
 const GitHubStrategy = require('passport-github').Strategy;
-require('dotenv').config();
+require('dotenv').config({ silent: process.env.NODE_ENV === 'production' });
 const PORT = process.env.PORT || 8080;
 
 console.log(process.env.CLIENT_ID);
