@@ -8,7 +8,6 @@ function HomeCtrl(user, $http, $timeout) {
     vm.repoArr = []; //Array to hold the users repos
     vm.user = []; //Array to hold the user data
 
-
     /*================PUSHER===================================*/
     // Enable pusher logging - don't include this in production
     Pusher.logToConsole = true;
@@ -24,7 +23,6 @@ function HomeCtrl(user, $http, $timeout) {
             vm.user = resp.data;
             console.log(vm.user);
         });
-
 
     $http.get('/repos')
         .then(function(resp) {

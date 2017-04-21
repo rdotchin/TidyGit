@@ -8,7 +8,7 @@ const simpleGit = require('simple-git'); // Used for git add -A
 const rimraf = require('rimraf'); // npm package to delete directory
 const Pusher = require('pusher'); //websockets to communicate to the client
 const _ = require('lodash');
-var GlobalUser, GlobalToken, GlobalRepoURL, GlobalRepoName, GlobalRepoLocal; //user, token, repo URL, repo name, __dirname + repo name
+var GlobalUser, GlobalToken, GlobalRepoURL, GlobalRepoName, GlobalRepoLocal, GlobalBranchName; //user, token, repo URL, repo name, __dirname + repo name
 
 //counters for specific files beautified to be sent back with pusher
 var JScounter = 0;
@@ -47,6 +47,8 @@ module.exports = {
         GlobalRepoURL = repoURL;
         GlobalRepoLocal = __dirname + '/' + repoName;
         GlobalRepoName = repoName;
+        GlobalBranchName = 'TidyGit' + Math.floor(Date.now() / 1000).toString();
+        console.log(GlobalBranchName);
         //reset counters
         JScounter = 0;
         CSScounter = 0;
@@ -54,8 +56,6 @@ module.exports = {
 
         //git clone GlobalRepoURL
         simpleGit(__dirname + '/').clone(GlobalRepoURL, GlobalRepoLocal, function(err, results) {
-
-            console.log('simplegit clone', err);
             //PUSHER
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'clone', {
                 "message": '1. ' + GlobalRepoName + ' Cloned'
@@ -68,26 +68,14 @@ module.exports = {
 //create branch called TidyGit and checkout that branch
 function createBranch() {
     //git checkout -b TidyGit
-    simpleGit(GlobalRepoLocal).checkoutLocalBranch('TidyGit', function(err, response) {
-        console.log('git checkout -b TidyGit', err);
+    simpleGit(GlobalRepoLocal).checkoutLocalBranch(GlobalBranchName, function(err, response) { //ADD CURRENT TIME TO TIDYGIT BRANCH**********
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'branch', {
             "message": '2. TidyGit Branch Created and Checkout'
 
         });
         filterDir();
-        /*pullBranch();*/
     })
-}
-
-function pullBranch() {
-    simpleGit(GlobalRepoLocal).pull('origin', 'master', function(err, update) {
-        if (err) {
-            console.log(err);
-        }
-        console.log("PULL", update);
-    });
-    filterDir();
 }
 
 /*sort all .html .css. js files into an array*/
@@ -106,13 +94,10 @@ function filterDir() {
         filesToUpdate = filesToUpdate.filter(function(file) {
             return _.includes(allowedExtensions, _.last(file.split('.')));
         });
-        console.log(filesToUpdate);
         //tide the files once they are sorted into an array
         tidyNextFile();
     });
 }
-
-
 
 /* Tidy each file.  If there is no file then run the simple git command to
  git commit -A follwed by invoking the function to github commit*/
@@ -156,10 +141,8 @@ function tidyFile(file, beautifyType) {
     });
 }
 
-
 function gitAdd() {
     return simpleGit(GlobalRepoLocal).raw(['add', '-A'], function(err, result) {
-        console.log('git add -A', err);
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitAdd', {
             "message": '7. git add -A'
@@ -175,14 +158,13 @@ function gitCommit() {
     simpleGit(GlobalRepoLocal)
         .addConfig('user.name', GlobalUser.name) //set local config name
         .addConfig('user.email', GlobalUser.email) //set local config email
-        .commit('TidyGit', {
+        .commit(GlobalBranchName, {
             '--author': GlobalUser.name + ' <' + GlobalUser.email + '>'
         }, function(err, result) {
             //PUSHER
             pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitCommit', {
                 "message": '8. git commit'
             });
-            console.log('git commit', err);
             pushBranch();
         });
 }
@@ -190,12 +172,11 @@ function gitCommit() {
 //git push origin TidyGit
 function pushBranch() {
     //simpleGit git push origin TidyGit
-    simpleGit(GlobalRepoLocal).push(['origin', 'TidyGit:TidyGit'], function(err, result) {
+    simpleGit(GlobalRepoLocal).push(['origin', GlobalBranchName], function(err, result) {
         //PUSHER
         pusher.trigger(GlobalUser.username + '-' + GlobalRepoName, 'gitPush', {
             "message": '9. git push origin TidyGit'
         });
-        console.log('git push origin TidyGit', err);
         githubPR(); //call Pull Request function
     });
 }
@@ -210,7 +191,7 @@ function githubPR() {
     var body = {
         "title": "TidyGit",
         "body": "Thank you for using TidyGit",
-        "head": "TidyGit",
+        "head": GlobalBranchName,
         "base": "master"
     };
     var url = "https://api.github.com/repos/" + GlobalUser.username + "/" + GlobalRepoName + "/pulls";
