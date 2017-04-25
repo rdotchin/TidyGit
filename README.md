@@ -11,7 +11,7 @@ When the user selects a repository TidyGit will
 * The changes will be committed and pushed 
 * A pull request will be created for the user
  
-![tidygit](https://raw.githubusercontent.com/rdotchin/tidygit/master/TidyGit/app/tidygit/layout/images/tidygit.gif)
+![tidygit](https://github.com/rdotchin/TidyGit/blob/master/app/tidygit/layout/images/tidygit.gif)
 
 ## Custom Beautify Options
 
